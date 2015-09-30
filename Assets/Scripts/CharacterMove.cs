@@ -20,13 +20,13 @@ public class CharacterMove : MonoBehaviour {
 	private Vector3 move_vector ;
 	private CharacterController characterController = null;
 	private Animator animator = null;
-	private MMD4MecanimModel model = null;
+	//private MMD4MecanimModel model = null;
 	private AnimatorStateInfo animatorState;
 	
 	// Use this for initialization
 	public void Start () {
 		characterController = this.GetComponent<CharacterController> ();
-		model = this.GetComponent<MMD4MecanimModel>();
+		//model = this.GetComponent<MMD4MecanimModel>();
 		if(useAnimator)this.animator = this.GetComponent<Animator>();
 		if (useAnimator)this.animatorState = this.animator.GetCurrentAnimatorStateInfo (0);
 		move_vector = new Vector3(0.0f,0.0f,0.0f);
