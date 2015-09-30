@@ -135,6 +135,11 @@ namespace Fungus
 					break;
 				}
 			}
+
+			Debug.Log("select");
+			cachedButtons[0].Select ();
+			cachedButtons[0].Select ();
+			Debug.Log("_select_");
 			
 			return addedOption;
 		}

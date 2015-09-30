@@ -53,8 +53,8 @@ public class CameraMove : MonoBehaviour {
 	//三人称視点の更新
 	private void UpdateTP(){
 		this.zoom += Input.GetAxis ("Zoom") * 0.1f;
-		this.HorizontalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("Horizontal");
-		this.VerticalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("Vertical");
+		this.HorizontalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("Horizontal2");
+		this.VerticalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("Vertical2");
 		
 		if (HorizontalAngle >= Mathf.PI * 2.0f)
 			HorizontalAngle -= Mathf.PI * 2.0f;
@@ -89,8 +89,8 @@ public class CameraMove : MonoBehaviour {
 
 	//一人称視点の更新
 	private void UpdateFP(){
-		this.HorizontalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("Horizontal");
-		this.VerticalAngle += angle_speed * Input.GetAxisRaw ("Vertical");
+		this.HorizontalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("Horizontal2");
+		this.VerticalAngle += angle_speed * Input.GetAxisRaw ("Vertical2");
 		
 		if (HorizontalAngle >= Mathf.PI * 2.0f)
 			HorizontalAngle -= Mathf.PI * 2.0f;

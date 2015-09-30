@@ -155,7 +155,7 @@ Material:
       data:
         first:
           name: _Metallic
-        second: 0
+        second: .200000003
       data:
         first:
           name: _Rotation
@@ -168,7 +168,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: .683823526, g: .683823526, b: .683823526, a: 1}
+        second: {r: .458620697, g: .458620697, b: .458620697, a: 1}
       data:
         first:
           name: _SpecColor

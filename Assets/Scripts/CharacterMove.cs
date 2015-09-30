@@ -22,7 +22,6 @@ public class CharacterMove : MonoBehaviour {
 	private Animator animator = null;
 	private MMD4MecanimModel model = null;
 	private AnimatorStateInfo animatorState;
-	private bool isJump = false;
 	
 	// Use this for initialization
 	public void Start () {
@@ -40,16 +39,12 @@ public class CharacterMove : MonoBehaviour {
 	
 	private void moveJump(){
 		if (CheckGrounded()) {
-			Debug.Log ("moveVector:"+move_vector);
-			Debug.Log ("isJump:"+isJump);
-			if(useAnimator && this.animator.GetBool ("isJump")==true && move_vector.y == 0.0f && isJump == true){
+			if(useAnimator && this.animator.GetBool ("isJump")==true && move_vector.y == 0.0f){
 				this.animator.SetBool ("isJump",false);
-				isJump=false;
 			}
-			if(Input.GetButton("Jump") && move_vector.y == 0.0f && isJump == false){
+			if(Input.GetButton("Jump") && move_vector.y == 0.0f){
 				Debug.Log ("Jump");
 				move_vector.y+=(JumpPower);
-				isJump=true;
 				if(useAnimator)this.animator.SetBool ("isJump", true);
 			}
 		}
@@ -93,11 +88,11 @@ public class CharacterMove : MonoBehaviour {
 		
 		float angle = Camera.transform.localEulerAngles.y;
 		
-		float mv_z = (  Input.GetAxis ("Vertical2") * Mathf.Cos (Mathf.Deg2Rad * angle) + Input.GetAxis ("Horizontal2") * Mathf.Sin (Mathf.Deg2Rad * (angle+180.0f)) ) * spd;
-		float mv_x = (  Input.GetAxis ("Vertical2") * Mathf.Sin (Mathf.Deg2Rad * angle) - Input.GetAxis ("Horizontal2") * Mathf.Cos (Mathf.Deg2Rad * (angle+180.0f)) ) * spd;
+		float mv_z = (  Input.GetAxis ("Vertical") * Mathf.Cos (Mathf.Deg2Rad * angle) + Input.GetAxis ("Horizontal") * Mathf.Sin (Mathf.Deg2Rad * (angle+180.0f)) ) * spd;
+		float mv_x = (  Input.GetAxis ("Vertical") * Mathf.Sin (Mathf.Deg2Rad * angle) - Input.GetAxis ("Horizontal") * Mathf.Cos (Mathf.Deg2Rad * (angle+180.0f)) ) * spd;
 		move_vector = new Vector3 (mv_x,move_vector.y,mv_z);
 
-		if (mv_z != 0.0f && mv_x != 0.0f) {
+		if (mv_z != 0.0f || mv_x != 0.0f) {
 			if (spd <= DashSpeed + AdjustSpeed) {
 				if (useAnimator && this.animator.GetBool("isJump") == false){
 					this.animator.SetBool ("isWalking", true);

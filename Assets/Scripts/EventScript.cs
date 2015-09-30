@@ -27,7 +27,7 @@ public class EventScript : MonoBehaviour {
 			if(flowchart.GetBooleanVariable("StopOther")==true){
 				face2face();
 			}else{
-				if (Input.GetButtonDown ("MessageClick")) {
+				if (Input.GetButtonDown ("Submit")) {
 					isMessageActive = true;
 					flowchart.ExecuteBlock (blockName);
 				}
@@ -47,8 +47,10 @@ public class EventScript : MonoBehaviour {
 	}
 
 	private void face2face(){
-		this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(player.transform.position - this.transform.position), 0.1f);
-		player.transform.rotation = Quaternion.Slerp(player.transform.rotation, Quaternion.LookRotation(this.transform.position - player.transform.position), 0.1f);
+		Vector3 to = new Vector3 (player.transform.position.x - this.transform.position.x,0, player.transform.position.z - this.transform.position.z);
+		this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(to), 0.1f);
+		to = new Vector3 (this.transform.position.x - player.transform.position.x, 0, this.transform.position.z - player.transform.position.z);
+		player.transform.rotation = Quaternion.Slerp(player.transform.rotation, Quaternion.LookRotation(to), 0.1f);
 	}
 
 
