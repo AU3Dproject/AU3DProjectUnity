@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
@@ -18,6 +19,7 @@ namespace Fungus
 
 		public static MenuDialog GetMenuDialog()
 		{
+
 			if (activeMenuDialog == null)
 			{
 				// Use first Menu Dialog found in the scene (if any)
@@ -136,11 +138,27 @@ namespace Fungus
 				}
 			}
 
-			Debug.Log("select");
+			if (cachedButtons.Length > 1) {
+				for (int i=0; i<cachedButtons.Length; i++) {
+					Navigation nav = new Navigation();
+					nav.mode = Navigation.Mode.Explicit;
+					if (i == 0) {
+						nav.selectOnUp = cachedButtons [cachedButtons.Length - 1];
+					} else {
+						nav.selectOnUp = cachedButtons [i - 1];
+					}
+					if (i == cachedButtons.Length - 1) {
+						nav.selectOnDown = cachedButtons [0];
+					} else {
+						nav.selectOnDown = cachedButtons [i + 1];
+					}
+					cachedButtons[i].navigation = nav;
+				}
+			}
+
 			cachedButtons[0].Select ();
 			cachedButtons[0].Select ();
-			Debug.Log("_select_");
-			
+
 			return addedOption;
 		}
 

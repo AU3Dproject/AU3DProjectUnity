@@ -85,6 +85,11 @@ namespace Fungus
 
 		protected virtual void Update()
 		{
+
+			if (Input.GetButtonDown ("Submit")) {
+				SetNextLineFlag();
+			}
+
 			switch (keyPressMode)
 			{
 			case KeyPressMode.Disabled:
@@ -122,7 +127,7 @@ namespace Fungus
 			case ClickMode.Disabled:
 				break;
 			case ClickMode.ClickAnywhere:
-				if (Input.GetMouseButtonDown(0) || Input.GetKey ("Submit"))
+				if (Input.GetMouseButtonDown(0))
 				{
 					SetNextLineFlag();
 				}

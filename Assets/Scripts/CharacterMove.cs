@@ -10,6 +10,7 @@ public class CharacterMove : MonoBehaviour {
 	public float AdjustSpeed = 0.0f;
 	public float Gravity = 30.0f;
 	public float JumpPower = 10.0f;
+	public float tolerance = 0.5f;
 	public Vector3 initPosition = new Vector3 (-413, 0, 330);
 	public bool DashButtonMode = false;
 	public GameObject Camera=null;
@@ -64,7 +65,7 @@ public class CharacterMove : MonoBehaviour {
 	}
 	
 	private void moveGravity(){
-		if (!characterController.isGrounded) {
+		if (!CheckGrounded()) {
 			move_vector.y -= Gravity * Time.deltaTime;
 		} else {
 			move_vector.y = 0.0f;
@@ -127,8 +128,6 @@ public class CharacterMove : MonoBehaviour {
 		//放つ光線の初期位置と姿勢
 		//若干身体にめり込ませた位置から発射しないと正しく判定できない時がある
 		Ray ray = new Ray(this.transform.position + Vector3.up * 0.1f, Vector3.down);
-		//探索距離
-		float tolerance = 0.3f;
 		//Raycastがhitするかどうかで判定
 		//地面にのみ衝突するようにレイヤを指定する
 		return Physics.Raycast(ray, tolerance,1);
@@ -136,11 +135,16 @@ public class CharacterMove : MonoBehaviour {
 	
 	private void move(){
 		moveGravity ();
-		if (flowchart.GetBooleanVariable ("StopOther")==false) {
+		if (flowchart.GetBooleanVariable ("StopOther") == false) {
 			moveInit ();
 			moveJump ();
 			moveWalking ();
 			characterController.Move (move_vector * Time.deltaTime);
+		} else {
+			this.animator.SetBool ("isJump",false);
+			this.animator.SetBool ("isWalking", false);
+			this.animator.SetBool ("isRunning", false);
+			this.animator.SetBool ("isStaying", true);
 		}
 	}
 

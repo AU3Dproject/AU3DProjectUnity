@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 using Fungus;
 
 public class EventScript : MonoBehaviour {
@@ -13,11 +14,12 @@ public class EventScript : MonoBehaviour {
 	public float nearDistance = 1.0f;
 
 	private bool isMessageActive = false;
-
+	private StandaloneInputModule module ;
 
 	// Use this for initialization
 	void Start () {
 		nearObject.enabled = false;
+		module = GameObject.Find ("EventSystem").GetComponent<StandaloneInputModule>();
 	}
 	
 	// Update is called once per frame
@@ -29,6 +31,7 @@ public class EventScript : MonoBehaviour {
 			}else{
 				if (Input.GetButtonDown ("Submit")) {
 					isMessageActive = true;
+					module.gameObject.SetActive(true);
 					flowchart.ExecuteBlock (blockName);
 				}
 			}
@@ -52,6 +55,4 @@ public class EventScript : MonoBehaviour {
 		to = new Vector3 (this.transform.position.x - player.transform.position.x, 0, this.transform.position.z - player.transform.position.z);
 		player.transform.rotation = Quaternion.Slerp(player.transform.rotation, Quaternion.LookRotation(to), 0.1f);
 	}
-
-
 }
