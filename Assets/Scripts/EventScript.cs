@@ -7,19 +7,19 @@ public class EventScript : MonoBehaviour {
 
 	[SerializeField]
 	public Flowchart flowchart ;
-	public GameObject player;
 	public MeshRenderer nearObject;
 
+	public string playerName = "Player";
 	public string blockName ;
 	public float nearDistance = 1.0f;
 
 	private bool isMessageActive = false;
-	private StandaloneInputModule module ;
+	private GameObject player;
 
 	// Use this for initialization
 	void Start () {
 		nearObject.enabled = false;
-		module = GameObject.Find ("EventSystem").GetComponent<StandaloneInputModule>();
+		player = GameObject.Find (playerName);
 	}
 	
 	// Update is called once per frame
@@ -31,7 +31,6 @@ public class EventScript : MonoBehaviour {
 			}else{
 				if (Input.GetButtonDown ("Submit")) {
 					isMessageActive = true;
-					module.gameObject.SetActive(true);
 					flowchart.ExecuteBlock (blockName);
 				}
 			}
@@ -42,6 +41,8 @@ public class EventScript : MonoBehaviour {
 	}
 
 	private bool isAccess(){
+		if (player == null)
+			return false;
 		float distance = Vector3.Distance (this.transform.position,player.transform.position);
 		if (distance < nearDistance)
 			return true;

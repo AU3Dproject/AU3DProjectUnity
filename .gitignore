@@ -24,3 +24,6 @@ sysinfo.txt
 Assets/MMD4Mecanim/
 Assets/BulletXNA/
 Assets/Plugins/
+
+# execute file
+/au3d_build

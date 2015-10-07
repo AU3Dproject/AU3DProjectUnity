@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityStandardAssets.ImageEffects;
 
 public class CameraMove : MonoBehaviour {
 	
@@ -80,7 +81,7 @@ public class CameraMove : MonoBehaviour {
 
 		Vector3 ptv = Player.transform.position + new Vector3 (0, tall, 0);
 		Vector3 normal = (this.transform.position - ptv).normalized;
-		if (Physics.Raycast (ptv, normal, out hit,distance + zoom)) {
+		if (Physics.Raycast (ptv, normal, out hit,distance + zoom,1)) {
 			//Debug.Log ((hit_num++)+":Hit : "+hit.collider.name);
 			this.transform.position = hit.point;
 		}
@@ -133,20 +134,21 @@ public class CameraMove : MonoBehaviour {
 	}
 
 	public void setTPMode(bool value){
-		isTP=value;
-		if (isTP) {
-			distance = 1.2f;
-			tall = 1.0f;
-			if(playerModel != null){
-				playerModel.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-			}
-		} else {
+		isTP=!value;
+		if (!isTP) {
 			distance = 0.1f;
 			tall = 1.2f;
 			if(playerModel != null){
 				playerModel.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
 			}
+		} else {
+			distance = 1.2f;
+			tall = 1.0f;
+			if(playerModel != null){
+				playerModel.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+			}
 		}
 	}
+
 	
 }

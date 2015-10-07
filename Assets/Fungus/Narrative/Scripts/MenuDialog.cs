@@ -136,6 +136,7 @@ namespace Fungus
 					addedOption = true;
 					break;
 				}
+
 			}
 
 			if (cachedButtons.Length > 1) {
@@ -156,8 +157,7 @@ namespace Fungus
 				}
 			}
 
-			cachedButtons[0].Select ();
-			cachedButtons[0].Select ();
+			cachedButtons [0].Select ();
 
 			return addedOption;
 		}
@@ -212,5 +212,5 @@ namespace Fungus
 			}
 		}
 	}
-	
+
 }

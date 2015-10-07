@@ -44,7 +44,6 @@ public class CharacterMove : MonoBehaviour {
 				this.animator.SetBool ("isJump",false);
 			}
 			if(Input.GetButton("Jump") && move_vector.y == 0.0f){
-				Debug.Log ("Jump");
 				move_vector.y+=(JumpPower);
 				if(useAnimator)this.animator.SetBool ("isJump", true);
 			}
@@ -124,7 +123,11 @@ public class CharacterMove : MonoBehaviour {
 	public bool CheckGrounded()
 	{
 		//CharacterControlle.IsGroundedがtrueならRaycastを使わずに判定終了
-		if (characterController.isGrounded) { return true; }
+		if (characterController.isGrounded) {
+			return true;
+		} else {
+			return false;
+		}
 		//放つ光線の初期位置と姿勢
 		//若干身体にめり込ませた位置から発射しないと正しく判定できない時がある
 		Ray ray = new Ray(this.transform.position + Vector3.up * 0.1f, Vector3.down);
