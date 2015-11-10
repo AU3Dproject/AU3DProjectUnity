@@ -168,19 +168,19 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: .25999999, g: .195779994, b: .137539998, a: 1}
+        second: {r: .520689666, g: .392079324, b: .275444865, a: 1}
       data:
         first:
           name: _SpecColor
         second: {r: .200000003, g: .200000003, b: .200000003, a: 1}
       data:
         first:
-          name: _Emission
-        second: {r: 0, g: 0, b: 0, a: 0}
-      data:
-        first:
           name: _MainColor
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _Emission
+        second: {r: 0, g: 0, b: 0, a: 0}
       data:
         first:
           name: _Tint

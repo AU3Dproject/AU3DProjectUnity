@@ -59,7 +59,7 @@ public class CharacterMove : MonoBehaviour {
 				this.animator.SetBool ("isRunning", false);
 				this.animator.SetBool ("isStaying", true);
 			}
-			this.transform.localPosition = initPosition;
+			this.transform.position = initPosition;
 		}
 	}
 	

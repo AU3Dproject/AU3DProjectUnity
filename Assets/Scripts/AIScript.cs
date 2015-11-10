@@ -35,7 +35,7 @@ public class AIScript : MonoBehaviour {
 				nextTime = Random.value * timeRange;
 			}
 		}
-		if (flowchart.GetBooleanVariable ("StopOther") == true) {
+		if (flowchart.GetBooleanVariable("StopOther")==true) {
 			agent.SetDestination(this.transform.position);
 		}
 

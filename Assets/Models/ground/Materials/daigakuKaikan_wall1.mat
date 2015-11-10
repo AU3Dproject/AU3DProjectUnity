@@ -131,7 +131,7 @@ Material:
       data:
         first:
           name: _Glossiness
-        second: 0
+        second: .206
       data:
         first:
           name: _BumpScale
@@ -155,7 +155,7 @@ Material:
       data:
         first:
           name: _Metallic
-        second: 0
+        second: .301999986
       data:
         first:
           name: _Rotation
@@ -175,12 +175,12 @@ Material:
         second: {r: .200000003, g: .200000003, b: .200000003, a: 1}
       data:
         first:
-          name: _Emission
-        second: {r: 0, g: 0, b: 0, a: 0}
-      data:
-        first:
           name: _MainColor
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _Emission
+        second: {r: 0, g: 0, b: 0, a: 0}
       data:
         first:
           name: _Tint

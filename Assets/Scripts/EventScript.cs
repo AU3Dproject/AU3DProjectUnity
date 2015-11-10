@@ -13,11 +13,13 @@ public class EventScript : MonoBehaviour {
 	public string blockName ;
 	public float nearDistance = 1.0f;
 
-	private bool isMessageActive = false;
 	private GameObject player;
+
+	public static bool isEventActive = false;
 
 	// Use this for initialization
 	void Start () {
+		isEventActive = false;
 		nearObject.enabled = false;
 		player = GameObject.Find (playerName);
 	}
@@ -26,17 +28,12 @@ public class EventScript : MonoBehaviour {
 	void Update () {
 		if (isAccess ()) {
 			nearObject.enabled = true;
-			if(flowchart.GetBooleanVariable("StopOther")==true){
-				face2face();
-			}else{
-				if (Input.GetButtonDown ("Submit")) {
-					isMessageActive = true;
-					flowchart.ExecuteBlock (blockName);
-				}
+			if(Input.GetButtonDown("Submit")){
+
 			}
+
 		} else {
 			nearObject.enabled = false;
-			isMessageActive=false;
 		}
 	}
 

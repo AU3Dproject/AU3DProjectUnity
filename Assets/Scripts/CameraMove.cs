@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityStandardAssets.ImageEffects;
 
 public class CameraMove : MonoBehaviour {
 	
@@ -76,7 +75,7 @@ public class CameraMove : MonoBehaviour {
 		float new_y = (distance + zoom) * Mathf.Sin (VerticalAngle) + (Player.transform.position.y + tall);
 		float new_z = - (distance + zoom) * Mathf.Cos (HorizontalAngle) - Mathf.Cos (VerticalAngle) * Mathf.Cos (HorizontalAngle) + Player.transform.position.z;
 		
-		this.transform.localPosition = new Vector3 (new_x, new_y, new_z);
+		this.transform.position = new Vector3 (new_x, new_y, new_z);
 		this.transform.LookAt (Player.transform.position + new Vector3 (0.0f, tall, 0.0f));
 
 		Vector3 ptv = Player.transform.position + new Vector3 (0, tall, 0);
@@ -108,7 +107,7 @@ public class CameraMove : MonoBehaviour {
 		
 		Vector3 lookVec = Player.transform.position + new Vector3(0.0f,tall,0.0f);
 		
-		this.transform.localPosition = new Vector3 (new_x, new_y, new_z);
+		this.transform.position = new Vector3 (new_x, new_y, new_z);
 		this.transform.LookAt (lookVec);
 		
 		float new_rotation_x = this.transform.localRotation.eulerAngles.x + VerticalAngle;
