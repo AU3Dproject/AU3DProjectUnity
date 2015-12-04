@@ -4,148 +4,141 @@ using System.Collections;
 public class CameraMove : MonoBehaviour {
 	
 	[SerializeField]
-	GameObject Player = null;
-	
-	[SerializeField]
-	float distance = 1.2f ;
-	
-	[SerializeField]
-	float HorizontalAngle = Mathf.PI ;
+	//PlayerとCameraの距離
+	public float distance = 1.2f ;
+	//Cameraの水平方向の角度
+	public float HorizontalAngle = Mathf.PI ;
+	//Cameraの垂直方向の角度
+	public float VerticalAngle = 0.0f ;
+	//Cameraの位置的高さ
+	public float tall = 1.0f;
+	//Cameraの角度調整時の速度
+	public float angle_speed = 2.0f;
+	//Cameraの拡大率
+	public float zoom = 0.0f;
+	//三人称視点フラグ
+	public bool isTP = true;
+	//三人称視点の水平方向角度の制限(度数法)
+	public Vector2 HorizontalAngleLimitTP = new Vector2(0.0f,360.0f);
+	//三人称視点の並行方向角度の制限(度数法)
+	public Vector2 VerticalAngleLimitTP = new Vector2(-25.0f,25.0f);
+	//一人称視点の水平方向角度の制限(度数法)
+	public Vector2 HorizontalAngleLimitFP = new Vector2(0.0f,360.0f);
+	//一人称視点の並行方向角度の制限(度数法)
+	public Vector2 VerticalAngleLimitFP = new Vector2(-25.0f,25.0f);
 
-	[SerializeField]
-	float VerticalAngle = 0.0f ;
-
-	[SerializeField]
-	float tall = 1.0f;
-	
-	[SerializeField]
-	float angle_speed = 2.0f;
-
-	[SerializeField]
-	float zoom = 0.0f;
-
-	[SerializeField]
-	bool isTP = true;
-
-	[SerializeField]
-	SkinnedMeshRenderer playerModel = null;
-
-	private Camera cam = null;
+	//三人称視点時のPlayerモデル不可視化のためのPlayer表示コンポーネント取得
+	private SkinnedMeshRenderer playerModel = null;
+	//Playerオブジェクト
+	private GameObject Player = null;
+	//Cameraコンポーネント
+	private Camera cameraComponent = null;
+	//Cameraの壁めり込み判定のためのRaycast
 	private RaycastHit hit;
-	private int hit_num = 0;
 	
-	// Use this for initialization
+	/* Start
+	 * 　（１）Component・Objectの取得
+	 */
 	public void Start () {
-		cam = GetComponent<Camera> ();
+		cameraComponent = GetComponent<Camera> ();
+		Player = GetComponentInParent <PlayerControllerScript> ().Player;
+		playerModel = Player.GetComponentInChildren<SkinnedMeshRenderer>();
 	}
 
 	
-	// Update is called once per frame
+	/* FixedUpdate
+	 * 　（１）三人称視点モードにより分岐
+	 * 　（２）カメラ動作処理
+	 */
 	public void FixedUpdate () {
-		if (isTP == true) {
-			UpdateTP ();
-		} else {
-			UpdateFP ();
-		}
+		UpdateCamera ();
 	}
 
 
-	//三人称視点の更新
-	private void UpdateTP(){
+	/* カメラ処理
+	 * 　（１）拡大率・角度調整
+	 * 　（２）拡大率・角度制限
+	 * 　（３）新しい座標値計算と反映
+	 * 　（４）新しい角度の反映
+	 * 　（５）めり込み判定と調整
+	 */
+	private void UpdateCamera(){
+
+		//拡大率調整
 		this.zoom += Input.GetAxis ("Zoom") * 0.1f;
+		//水平・垂直角度調整
 		this.HorizontalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("Horizontal2");
 		this.VerticalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("Vertical2");
-		
-		if (HorizontalAngle >= Mathf.PI * 2.0f)
-			HorizontalAngle -= Mathf.PI * 2.0f;
-		
-		if (VerticalAngle >= 1.3f)
-			VerticalAngle = 1.3f;
-		
-		if (VerticalAngle <= -0.85f)
-			VerticalAngle = -0.85f;
-		
-		if (zoom <= -distance / 2)
-			zoom = -distance / 2;
-		
-		if (zoom >= distance * 2)
-			zoom = distance * 2;
-		
-		float new_x = - (distance + zoom) * Mathf.Sin (HorizontalAngle) - Mathf.Cos (VerticalAngle) * Mathf.Sin (HorizontalAngle) + Player.transform.position.x;
-		float new_y = (distance + zoom) * Mathf.Sin (VerticalAngle) + (Player.transform.position.y + tall);
-		float new_z = - (distance + zoom) * Mathf.Cos (HorizontalAngle) - Mathf.Cos (VerticalAngle) * Mathf.Cos (HorizontalAngle) + Player.transform.position.z;
-		
-		this.transform.position = new Vector3 (new_x, new_y, new_z);
-		this.transform.LookAt (Player.transform.position + new Vector3 (0.0f, tall, 0.0f));
 
+		//水平角度の数値上の制限
+		if (HorizontalAngle <= (isTP ? HorizontalAngleLimitTP.x : HorizontalAngleLimitFP.x) * Mathf.Deg2Rad)
+			HorizontalAngle += (isTP ? HorizontalAngleLimitTP.y : HorizontalAngleLimitFP.y) * Mathf.Deg2Rad;
+		if (HorizontalAngle >= (isTP ? HorizontalAngleLimitTP.y : HorizontalAngleLimitFP.y) * Mathf.Deg2Rad)
+			HorizontalAngle -= (isTP ? HorizontalAngleLimitTP.y : HorizontalAngleLimitFP.y) * Mathf.Deg2Rad;
+		//垂直角度の制限
+		if (VerticalAngle <= (isTP ? VerticalAngleLimitTP.x : VerticalAngleLimitFP.x) * Mathf.Deg2Rad)
+			VerticalAngle =  (isTP ? VerticalAngleLimitTP.x : VerticalAngleLimitFP.x) * Mathf.Deg2Rad;
+		if (VerticalAngle >= (isTP ? VerticalAngleLimitTP.y : VerticalAngleLimitFP.y) * Mathf.Deg2Rad)
+			VerticalAngle =  (isTP ? VerticalAngleLimitTP.y : VerticalAngleLimitFP.y) * Mathf.Deg2Rad;
+		//拡大率の制限
+		if (zoom <= -distance / 2)zoom = -distance / 2;
+		if (zoom >= +distance * 2)zoom = +distance * 2;
+
+		//新しい各座標値の計算
+		Vector3 newPos = new Vector3 ();
+		if (isTP) {
+			newPos.x = - (distance + zoom) * Mathf.Sin (HorizontalAngle) - Mathf.Cos (VerticalAngle) * Mathf.Sin (HorizontalAngle) + Player.transform.position.x;
+			newPos.y = + (distance + zoom) * Mathf.Sin (VerticalAngle) + (Player.transform.position.y + tall);
+			newPos.z = - (distance + zoom) * Mathf.Cos (HorizontalAngle) - Mathf.Cos (VerticalAngle) * Mathf.Cos (HorizontalAngle) + Player.transform.position.z;
+		} else {
+			newPos.x = - (distance) * Mathf.Sin (HorizontalAngle) + Player.transform.position.x;
+			newPos.y = +  tall + Player.transform.position.y;
+			newPos.z = - (distance) * Mathf.Cos (HorizontalAngle) + Player.transform.position.z;
+		}
+		//新座標値の反映
+		this.transform.position = newPos;
+
+		//CameraをPlayer方向へ向ける
+		this.transform.LookAt (Player.transform.position + new Vector3(0.0f,tall,0.0f));
+		//Cameraをx軸方向を調整
+		if (!isTP) {
+			float new_rotation_x = this.transform.localRotation.eulerAngles.x + VerticalAngle * Mathf.Rad2Deg;
+			float new_rotation_y = this.transform.localRotation.eulerAngles.y;
+			float new_rotation_z = this.transform.localRotation.eulerAngles.z;
+			this.transform.localRotation = Quaternion.Euler (new Vector3 (-new_rotation_x, new_rotation_y, new_rotation_z));
+		}
+
+		//Cameraの壁めり込み判定と調整
 		Vector3 ptv = Player.transform.position + new Vector3 (0, tall, 0);
 		Vector3 normal = (this.transform.position - ptv).normalized;
 		if (Physics.Raycast (ptv, normal, out hit,distance + zoom,1)) {
-			//Debug.Log ((hit_num++)+":Hit : "+hit.collider.name);
 			this.transform.position = hit.point;
 		}
 
 	}
 
-	//一人称視点の更新
-	private void UpdateFP(){
-		this.HorizontalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("Horizontal2");
-		this.VerticalAngle += angle_speed * Input.GetAxisRaw ("Vertical2");
-		
-		if (HorizontalAngle >= Mathf.PI * 2.0f)
-			HorizontalAngle -= Mathf.PI * 2.0f;
-		
-		if (VerticalAngle >= 80.0f)
-			VerticalAngle = 80.0f;
-		
-		if (VerticalAngle <= -63.0f)
-			VerticalAngle = -63.0f;
-		
-		float new_x = - (distance) * Mathf.Sin (HorizontalAngle) + Player.transform.position.x;
-		float new_y = tall + Player.transform.position.y;
-		float new_z = - (distance) * Mathf.Cos (HorizontalAngle) + Player.transform.position.z;
-		
-		Vector3 lookVec = Player.transform.position + new Vector3(0.0f,tall,0.0f);
-		
-		this.transform.position = new Vector3 (new_x, new_y, new_z);
-		this.transform.LookAt (lookVec);
-		
-		float new_rotation_x = this.transform.localRotation.eulerAngles.x + VerticalAngle;
-		float new_rotation_y = this.transform.localRotation.eulerAngles.y;
-		float new_rotation_z = this.transform.localRotation.eulerAngles.z;
-		
-		this.transform.localRotation = Quaternion.Euler(new Vector3(-new_rotation_x,new_rotation_y,new_rotation_z));
-	}
 
 
-
-
-
-
-
+	//角度調整スピード変更
 	public void setAngleSpeed(float value){
 		angle_speed = value;
 	}
-
+	//Cameraの位置的高さの変更
 	public void setTall(float value){
 		tall = value;
 		distance = value;
 	}
-
+	//三人称視点と一人称視点の切替
 	public void setTPMode(bool value){
 		isTP=!value;
 		if (!isTP) {
 			distance = 0.1f;
 			tall = 1.2f;
-			if(playerModel != null){
-				playerModel.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-			}
+			if(playerModel != null)playerModel.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
 		} else {
 			distance = 1.2f;
 			tall = 1.0f;
-			if(playerModel != null){
-				playerModel.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
-			}
+			if(playerModel != null)playerModel.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
 		}
 	}
 
