@@ -135,7 +135,25 @@ namespace Fungus
 					break;
 				}
 			}
-			
+			/*
+            if(cachedButtons.Length > 1) {
+                for(int i = 0; i < cachedButtons.Length; i++) {
+                    Navigation nav = new Navigation();
+                    if (i == 0) {
+                        nav.selectOnUp = cachedButtons[cachedButtons.Length - 1];
+                    } else {
+                        nav.selectOnUp = cachedButtons[i - 1];
+                    }
+                    if (i == cachedButtons.Length - 1) {
+                        nav.selectOnDown = cachedButtons[0];
+                    } else {
+                        nav.selectOnDown = cachedButtons[i + 1];
+                    }
+                    cachedButtons[i].navigation = nav;
+                }
+            }*/
+            cachedButtons[0].Select();
+
 			return addedOption;
 		}
 

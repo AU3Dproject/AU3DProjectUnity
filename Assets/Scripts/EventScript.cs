@@ -14,6 +14,8 @@ public class EventScript : MonoBehaviour {
 	public string blockName ="";
 	//Playerの接近範囲
 	public float nearDistance = 1.0f;
+    //向き合わせを行うかどうか
+    public bool isFace2face = true;
 	//PlayerObject
 	private GameObject player = null;
 
@@ -45,7 +47,7 @@ public class EventScript : MonoBehaviour {
 			//Event開始ボタン押下
 			if(Input.GetButtonDown("Submit")){
 				//イベントの開始とPlayer動作停止
-				if(blockName!="" && flowchart!=null){
+				if(blockName!="" && flowchart!=null && isFlowchartActive()==false) {
 					flowchart.ExecuteBlock(blockName);
 					PlayerControllerScript.activeFlag=false;
 					if(isEventEnd==true)isEventEnd=false;
@@ -53,7 +55,7 @@ public class EventScript : MonoBehaviour {
 			}
 			//イベント中はPlayerとNPCを向かい合わせる。
 			if(this.isFlowchartActive() == true){
-				face2face ();
+				if(isFace2face) face2face ();
 			}
 
 		} else {
@@ -103,6 +105,9 @@ public class EventScript : MonoBehaviour {
 	 * 　（３）ちなみにFlowchart設定ミスやBlock無しFlowchartの場合エラー出るんで
 	 */
 	private bool isFlowchartActive(){
+
+        if (GameObject.Find("/MenuDialog") != null) return true;
+
 		Block [] blocks = flowchart.transform.GetComponents<Block>();
 		if (blocks != null) {
 			foreach (Block block in blocks) {
