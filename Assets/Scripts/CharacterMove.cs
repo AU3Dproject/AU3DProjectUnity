@@ -25,14 +25,19 @@ public class CharacterMove : MonoBehaviour {
 	public GameObject Camera=null;
 	//Animator仕様フラグ
 	public bool useAnimator = false;
+    //足音
+    public AudioClip WalkSE;
+    //ジャンプ音
+    public AudioClip JumpSE;
 
-	//フラーム移動ベクトル
-	private Vector3 move_vector ;
+    //フラーム移動ベクトル
+    private Vector3 move_vector ;
 	//CharacterContorollerオブジェクト
 	private CharacterController characterController = null;
 	//Animatorコンポーネント
 	private Animator animator = null;
-
+    //ジャンプのフラグ
+    private bool isJump = false;
 	
 	/* Start
 	 * 　（１）変数・コンポーネント初期化
@@ -89,7 +94,8 @@ public class CharacterMove : MonoBehaviour {
 			if(Input.GetButton("Jump")){
 				move_vector.y+=(JumpPower);
 				settingAnimator(null,null,null,true);
-			}
+                AudioSource.PlayClipAtPoint(JumpSE, animator.gameObject.transform.position);
+            }
 		}
 	}
 
@@ -164,14 +170,19 @@ public class CharacterMove : MonoBehaviour {
 	}
 
 
+    public void WalkSound(){
+        AudioSource.PlayClipAtPoint(WalkSE,animator.gameObject.transform.position);
+        
+    }
 
-	//privateメソッド
 
-	/* Animator設定
+    //privateメソッド
+
+    /* Animator設定
 	 * 　（１）PlayerAnimatorで用いる4状態のboolを変更する
 	 * 　（２）変更せず現状維持させる場合、引数にnullを入れる
 	 */
-	private void settingAnimator(bool? stay,bool? walk,bool? run,bool? jump){
+    private void settingAnimator(bool? stay,bool? walk,bool? run,bool? jump){
 		if (useAnimator) {
 			if(stay!=null)this.animator.SetBool ("isStaying", (bool)stay);
 			if(walk!=null)this.animator.SetBool ("isWalking", (bool)walk);
@@ -230,4 +241,5 @@ public class CharacterMove : MonoBehaviour {
 		}*/
 		return characterController.isGrounded;
 	}
+
 }

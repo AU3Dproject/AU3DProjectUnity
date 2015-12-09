@@ -16,8 +16,6 @@ public class AdjustPanelMove : MonoBehaviour {
 	//開閉アクションフラグ
 	private bool isAction = false;
 
-	private StandaloneInputModule module ;
-
 	/* Start
 	 * 　（１）初期化
 	 * 　（２）選択解除
