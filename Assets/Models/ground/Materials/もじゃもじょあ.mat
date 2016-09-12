@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: "\u3082\u3058\u3083\u3082\u3058\u3087\u3042"
+  m_Name: "\u3082\u3057\u3099\u3083\u3082\u3057\u3099\u3087\u3042"
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 5

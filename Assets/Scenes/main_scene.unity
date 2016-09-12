@@ -596,7 +596,7 @@ GameObject:
   - 114: {fileID: 98640175}
   m_Layer: 5
   m_Name: Panel
-  m_TagString: Untagged
+  m_TagString: ParentPanel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7021,7 +7021,7 @@ MonoBehaviour:
   tall: 1
   angle_speed: 2
   zoom: 0
-  isTP: 0
+  isTP: 1
   HorizontalAngleLimitTP: {x: 0, y: 360}
   VerticalAngleLimitTP: {x: -25, y: 60}
   HorizontalAngleLimitFP: {x: 0, y: 360}
@@ -9620,13 +9620,14 @@ GameObject:
   - 224: {fileID: 1344503923}
   - 222: {fileID: 1344503925}
   - 114: {fileID: 1344503924}
+  - 114: {fileID: 1344503926}
   m_Layer: 5
   m_Name: movePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1344503923
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9678,6 +9679,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1344503922}
+--- !u!114 &1344503926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1344503922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 063610e4b5ef3dd41b0b57894cd68cfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  beforeMenu: {fileID: 0}
+  eventSystem: {fileID: 0}
+  firstSelect: {fileID: 0}
 --- !u!1 &1351705593
 GameObject:
   m_ObjectHideFlags: 0
@@ -12998,6 +13013,7 @@ GameObject:
   - 124: {fileID: 1868330339}
   - 92: {fileID: 1868330338}
   - 81: {fileID: 1868330337}
+  - 114: {fileID: 1868330341}
   m_Layer: 8
   m_Name: UpMapCamera
   m_TagString: Untagged
@@ -13074,6 +13090,19 @@ Camera:
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
+--- !u!114 &1868330341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1868330335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f9677479b86f4c038971de1a478fb59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 999692205}
+  tall: 100
 --- !u!21 &1871020572
 Material:
   serializedVersion: 6
@@ -13473,12 +13502,12 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 1
           m_CallState: 2
-        - m_Target: {fileID: 1344503922}
-          m_MethodName: 
-          m_Mode: 1
+        - m_Target: {fileID: 1344503926}
+          m_MethodName: OpenMenu
+          m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: 
+            m_ObjectArgument: {fileID: 1344503926}
+            m_ObjectArgumentAssemblyTypeName: Menu, Assembly-CSharp
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: 
