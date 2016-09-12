@@ -67,8 +67,8 @@ public class CameraMove : MonoBehaviour {
 		//拡大率調整
 		this.zoom += Input.GetAxis ("Zoom") * 0.1f;
 		//水平・垂直角度調整
-		this.HorizontalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("Horizontal2");
-		this.VerticalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("Vertical2");
+		this.HorizontalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("CameraHorizontal");
+		this.VerticalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("CameraVertical");
 
 		//水平角度の数値上の制限
 		if (HorizontalAngle <= (isTP ? HorizontalAngleLimitTP.x : HorizontalAngleLimitFP.x) * Mathf.Deg2Rad)

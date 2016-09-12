@@ -137,8 +137,8 @@ public class CharacterMove : MonoBehaviour {
 		//カメラの直進方向の一時変数
 		float angle = Camera.transform.localEulerAngles.y;
 		//x方向とz方向の移動の0~1の数値
-		float mv_z = (Input.GetAxis ("Vertical") * Mathf.Cos (Mathf.Deg2Rad * angle) + Input.GetAxis ("Horizontal") * Mathf.Sin (Mathf.Deg2Rad * (angle + 180.0f)));
-		float mv_x = (Input.GetAxis ("Vertical") * Mathf.Sin (Mathf.Deg2Rad * angle) - Input.GetAxis ("Horizontal") * Mathf.Cos (Mathf.Deg2Rad * (angle + 180.0f)));
+		float mv_z = (Input.GetAxis ("MoveVertical") * Mathf.Cos (Mathf.Deg2Rad * angle) + Input.GetAxis ("MoveHorizontal") * Mathf.Sin (Mathf.Deg2Rad * (angle + 180.0f)));
+		float mv_x = (Input.GetAxis ("MoveVertical") * Mathf.Sin (Mathf.Deg2Rad * angle) - Input.GetAxis ("MoveHorizontal") * Mathf.Cos (Mathf.Deg2Rad * (angle + 180.0f)));
 		//x方向とz方向の移動のスピードと調整スピードの反映
 		mv_z = mv_z * (spd + AdjustSpeed);
 		mv_x = mv_x * (spd + AdjustSpeed);
