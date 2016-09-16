@@ -91,7 +91,7 @@ public class CharacterMove : MonoBehaviour {
 			if(this.animator.GetBool ("isJump")==true && move_vector.y == 0.0f){
 				settingAnimator(null,null,null,false);
 			}
-			if(Input.GetButton("Jump")){
+			if(Input.GetButtonDown("Jump")){
 				move_vector.y+=(JumpPower);
 				settingAnimator(null,null,null,true);
                 AudioSource.PlayClipAtPoint(JumpSE, animator.gameObject.transform.position);
