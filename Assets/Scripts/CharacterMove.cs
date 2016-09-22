@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using Fungus;
 
 public class CharacterMove : MonoBehaviour {
 	

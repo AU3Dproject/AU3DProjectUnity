@@ -1,13 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
-using Fungus;
 
 public class EventScript : MonoBehaviour {
 
 	[SerializeField]
-	//イベントのflowchart
-	public Flowchart flowchart = null;
 	//Playerの接近時表示Object
 	public MeshRenderer nearObject;
 	//Eventの開始Block
@@ -25,7 +22,6 @@ public class EventScript : MonoBehaviour {
 	 * 　（１）初期化
 	 */
 	void Start () {
-		flowchart = (this.transform.FindChild("Flowchart")).GetComponent<Flowchart>();
 		nearObject.enabled = false;
 		player = (GameObject.Find("/PlayerController").GetComponent<PlayerControllerScript>()).Player;
 	}
@@ -47,11 +43,11 @@ public class EventScript : MonoBehaviour {
 			//Event開始ボタン押下
 			if(Input.GetButtonDown("Submit")){
 				//イベントの開始とPlayer動作停止
-				if(blockName!="" && flowchart!=null && isFlowchartActive()==false) {
+				/*if(blockName!="" && flowchart!=null && isFlowchartActive()==false) {
 					flowchart.ExecuteBlock(blockName);
 					PlayerControllerScript.activeFlag=false;
 					if(isEventEnd==true)isEventEnd=false;
-				}
+				}*/
 			}
 			//イベント中はPlayerとNPCを向かい合わせる。
 			if(this.isFlowchartActive() == true){
@@ -108,7 +104,7 @@ public class EventScript : MonoBehaviour {
 
         if (GameObject.Find("/MenuDialog") != null) return true;
 
-		Block [] blocks = flowchart.transform.GetComponents<Block>();
+		/*Block [] blocks = flowchart.transform.GetComponents<Block>();
 		if (blocks != null) {
 			foreach (Block block in blocks) {
 				if (block.IsExecuting ()){
@@ -117,7 +113,7 @@ public class EventScript : MonoBehaviour {
 					continue;
 				}
 			}
-		}
+		}*/
 		return false;
 	}
 

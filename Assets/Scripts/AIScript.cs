@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Fungus;
 
 public class AIScript : MonoBehaviour {
 
