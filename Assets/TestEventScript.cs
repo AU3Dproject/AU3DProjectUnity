@@ -18,8 +18,7 @@ public class TestEventScript : MonoBehaviour {
 			time -= Time.deltaTime;
 		}else {
 			canvas.transform.GetChild(0).GetComponent<Writer>().isTextVisible = true;
-
-
+			this.gameObject.SetActive (false);
 		}
 	}
 }
