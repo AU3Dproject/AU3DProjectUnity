@@ -15,9 +15,9 @@ public class Writer : MonoBehaviour {
 	public string text = "";
 
 	[Tooltip("テキスト表示開始の合図(trueなら表示開始)")]
-    public bool isTextVisible = true;
+    public bool isTextActive = true;
 
-	[Tooltip("テキストの表示速度[秒]")]
+	[Tooltip("テキストの表示速度[秒]（デフォルトは0.05秒）")]
     public float textVisibleTime = 0.05f;
 
 	[Tooltip("効果音再生を除外する文字")]
@@ -37,6 +37,10 @@ public class Writer : MonoBehaviour {
     private Text textComponent;
 	//コマンドの検出等を行うインスタンス
 	private CommandFunction commandFunction;
+	//コマンド処理を行うためのテキストのバッファ(一時保管庫)
+	private string textBuff = "";
+	//スキップ状態を表す変数
+	private bool isSkip = false;
 
 
     /* Start
@@ -55,60 +59,84 @@ public class Writer : MonoBehaviour {
      */
     void Update() {
 
+		//各文字列変数の初期化
+		string nextString = "";
+		textBuff = "";
+
 		//表示開始であれば処理開始
-		if (isTextVisible) {
+		if (isTextActive) {
 
 			//時間の計測を行う
             time += Time.deltaTime;
 
 			//文字表示時間に達した時、テキストの順次表示処理
             if (time > textVisibleTime) {
-			
-				//次の表示文字の抽出
-				string nextString = getStringSingle(text,i++);
 
-				//文字列"<"を検出した時コマンド検出とするため、コマンドファンクションインスタンスを用いて種類の検出等を行う
-				while (nextString == "<") {
-					//コマンド文字列へ初期値の代入
-                    command = "<";
-					//コマンド終了を示す">"が出てくるまでその間の文字列を抽出
-                    while(nextString != ">") {
-						//1文字の抽出を実行
-						nextString = getStringSingle(text, i++);
-						//最低1文字はコマンドであるため最初の１回は必ずコマンドに抽出文字を挿入
-						//最終的に">"を挿入してループを抜けることとなる
-						command += nextString;
+
+				do{
+					//次の表示文字の抽出
+					nextString = getStringSingle (text, i++);
+
+					//文字列"<"を検出した時コマンド検出とするため、コマンドファンクションインスタンスを用いて種類の検出等を行う
+					while (nextString == "<") {
+						//コマンド文字列へ初期値の代入
+						command = "<";
+						//コマンド終了を示す">"が出てくるまでその間の文字列を抽出
+						while (nextString != ">") {
+							//1文字の抽出を実行
+							nextString = getStringSingle (text, i++);
+							//最低1文字はコマンドであるため最初の１回は必ずコマンドに抽出文字を挿入
+							//最終的に">"を挿入してループを抜けることとなる
+							command += nextString;
+						}
+						//検出したコマンドが開始コマンドなのか終了コマンドなのか判定し、
+						//開始コマンドであればコマンドの登録　その後、登録されたコマンドをつけて文字が表示される
+						//終了コマンドであればコマンドの解除　この後、コマンドは付加されずに文字が表示される
+						commandFunction.checkFunctionStartEnd (command);
+
+						//再度次の表示文字の抽出（コマンド検出した場合現在の表示する文字は">"になっているため）
+						nextString = getStringSingle (text, i++);
+
 					}
-					//検出したコマンドが開始コマンドなのか終了コマンドなのか判定し、
-					//開始コマンドであればコマンドの登録　その後、登録されたコマンドをつけて文字が表示される
-					//終了コマンドであればコマンドの解除　この後、コマンドは付加されずに文字が表示される
-					commandFunction.checkFunctionStartEnd(command);
 
-					//再度次の表示文字の抽出（コマンド検出した場合現在の表示する文字は">"になっているため）
-					nextString = getStringSingle(text, i++);
+					//全文一括表示のためにここで一旦textBuffにコマンドをつけた文字を格納しておき、
+					//もし全文一括表示中ならすべての文字を
+					if(commandFunction.isCommand() == true){
+						textBuff += commandFunction.addCommands(nextString);
+					}else{
+						textBuff += nextString;
+					}
 
-				}
+				}while((textVisibleTime <= 0 || isSkip) && i < text.Length);
 
 				//コマンドファンクションインスタンスで何かのコマンドが登録されている場合、登録コマンドを文字に付加して文字を表示
 				//コマンドが一つも登録されていなければ通常通り文字だけ表示
-				if (commandFunction.isCommand() == true) textComponent.text += commandFunction.addCommands(nextString);
-                else textComponent.text += nextString;
+				/*if (commandFunction.isCommand () == true) {
+					textComponent.text += commandFunction.addCommands (nextString);
+				} else {
+					textComponent.text += nextString;
+				}*/
+				textComponent.text += textBuff;
 
 				//テキスト表示に伴う効果音の再生（）
-				if(nextString != " " && nextString != "　" && nextString != "\n")textSound.PlayOneShot(textSound.clip);
+				if (nextString != " " && nextString != "　" && nextString != "\n") {
+					textSound.Play ();
+				}
 
-				//次の文字へ・時間を検知時間分シフト
+				//時間を検知時間分シフト
                 time -= textVisibleTime;
 
 				//参照位置が文字列の長さを超えていたら終了
 				if (i >= text.Length) {
-					isTextVisible = false;
+					isTextActive = false;
 				}
+
             }
         } else {
 			//値の初期化
             i = 0;
             time = 0.0f;
+			isSkip = false;
         }
 
     } 
@@ -132,7 +160,7 @@ public class Writer : MonoBehaviour {
 	 * 　（２）計測時間を-2秒から始めることで2秒のウェイトをかけてから文字表示を行うことができる。
 	 */
 	public void wait(float second) {
-		time -= second;
+		if(textVisibleTime > 0.0f)time -= second;
 	}
 
 	/* 音声再生可能文字判定
@@ -149,6 +177,33 @@ public class Writer : MonoBehaviour {
 		return true;
 	}
 
+	/* 全文字一括表示
+	 * 　（１）スキップ状態に移行する（入力待ちに入ると解除）
+	 */
+	public void allVisible(){
+		isSkip = true;
+	}
+
+	/* 文字表示速度の調整
+	 * 　（１）textVisibleTimeを調整可能
+	 * 　（２）0を入力することで一括表示のようなことも可能
+	 * 　（３）表示を遅くしたい文字の一つ手前で実行する必要がある
+	 */
+	public void speedChange(float spd){
+		textVisibleTime = spd;
+		time = 0.0f;
+	}
+
+
+	public void removeText(){
+		textComponent.text = "";
+		textBuff = "";
+	}
+
+	public void removeWindow(){
+		GameObject.Destroy (this.transform.parent.gameObject);
+	}
+
 
 	
 
@@ -159,6 +214,7 @@ public class Writer : MonoBehaviour {
 		private SizeCommand sizeCommand;
 		private ColorCommand colorCommand;
 		private WaitCommand waitCommand;
+		private SpeedCommand speedCommand;
 
 		private Command[] commands;
 		private List<Command> applyCommands = new List<Command>();
@@ -171,7 +227,8 @@ public class Writer : MonoBehaviour {
 			sizeCommand = new SizeCommand();
 			colorCommand = new ColorCommand();
 			waitCommand = new WaitCommand(writer);
-			Command[] commands = { boldCommand, italicCommand, sizeCommand, colorCommand, waitCommand };
+			speedCommand = new SpeedCommand(writer);
+			Command[] commands = { boldCommand, italicCommand, sizeCommand, colorCommand, waitCommand, speedCommand };
 			this.commands = commands;
 			this.writer = writer;
 		}
@@ -312,6 +369,26 @@ public class Writer : MonoBehaviour {
 					if (startCommand == "") startCommand = target;
 					Regex num = new Regex(@"[^\.*0-9]");
 					writer.wait(float.Parse(num.Replace(target, "")));
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+		class SpeedCommand : Command {
+			private Writer writer;
+			private float waitTime = 0.0f;
+			public SpeedCommand(Writer writer) {
+				startRegex = new Regex(@"<\s*speed\s*=\s*\d+(\.\d+)?>");
+				endRegex = new Regex(@"<\s*/speed\s*>");
+				this.writer = writer;
+				isStartOnly = true;
+			}
+			public override bool isStart(string target) {
+				if (startRegex.Match(target).Success) {
+					if (startCommand == "") startCommand = target;
+					Regex num = new Regex(@"[^\.*0-9]");
+					writer.speedChange(float.Parse(num.Replace(target, "")));
 					return true;
 				} else {
 					return false;
