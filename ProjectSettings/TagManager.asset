@@ -6,6 +6,8 @@ TagManager:
   tags:
   - FirstSelect
   - ParentPanel
+  - NoCollider
+  - Time
   layers:
   - Default
   - TransparentFX
@@ -18,7 +20,7 @@ TagManager:
   - Player
   - Event
   - Ground
-  - 
+  - Map
   - 
   - 
   - 

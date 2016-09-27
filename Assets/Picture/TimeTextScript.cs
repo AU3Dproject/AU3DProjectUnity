@@ -10,14 +10,17 @@ public class TimeTextScript : MonoBehaviour {
     private string coron;
     private string secondBuf = ":";
 
+	private virtualTimeScript virtualTime;
+
 	// Use this for initialization
 	void Start () {
         timeText = GetComponent<Text>();
+		virtualTime = GameObject.FindGameObjectWithTag("Time").GetComponent<virtualTimeScript>();
 	}
 
     // Update is called once per frame
     void Update() {
-        System.DateTime t = System.DateTime.Now;
+		/*DateTime t = DateTime.Now;
         time += Time.deltaTime;
 
         if(secondBuf != t.Second.ToString()) {
@@ -25,8 +28,12 @@ public class TimeTextScript : MonoBehaviour {
             else coron = ":";
         }
 
-        timeText.text = String.Format("{0:0000}" + "/" + "{1:00}" + "/" + "{2:00}" + " " + dowEnglish(t.DayOfWeek.ToString()) + " " + "{3:00}" + coron + "{4:00}" + coron + "{5:00}", t.Year,t.Month,t.Day,t.Hour, t.Minute, t.Second);
-        secondBuf = t.Second.ToString();
+        timeText.text = string.Format(
+			"{0:0000}" + "/" + "{1:00}" + "/" + "{2:00}" + " " + dowEnglish(t.DayOfWeek.ToString()) + " " + "{3:00}" + coron + "{4:00}" + coron + "{5:00}",
+			t.Year,t.Month,t.Day,t.Hour, t.Minute, t.Second
+		);
+        secondBuf = t.Second.ToString();*/
+		timeText.text = virtualTime.ToStringRich(timeText.color,true);
     }
 
     string dowKanji(string dow) {
