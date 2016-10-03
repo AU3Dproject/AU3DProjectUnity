@@ -7,7 +7,7 @@ public class AllMeshCollider : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		addCollider(this.transform);
+		addCollider(transform);
 	}
 	
 	// Update is called once per frame
@@ -20,8 +20,6 @@ public class AllMeshCollider : MonoBehaviour {
 			if (o.tag == "NoCollider") continue;
 
 			if (o.childCount > 0) addCollider(o);
-
-			Debug.Log(o.name);
 
 			MeshFilter mesh = o.GetComponent<MeshFilter>();
 			if (mesh == null) continue;

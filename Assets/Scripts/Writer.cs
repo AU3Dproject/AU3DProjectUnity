@@ -139,6 +139,11 @@ public class Writer : MonoBehaviour {
 			isSkip = false;
         }
 
+		//デバッグ用（Oキーをおした時一括ですべてを表示する。）
+		if(Input.GetKey(KeyCode.O)){
+			allVisible();
+		}
+
     } 
 
 	/* 文字列から任意の１文字を文字列として抽出する
@@ -182,6 +187,7 @@ public class Writer : MonoBehaviour {
 	 */
 	public void allVisible(){
 		isSkip = true;
+		time = 0.0f;
 	}
 
 	/* 文字表示速度の調整
@@ -194,14 +200,29 @@ public class Writer : MonoBehaviour {
 		time = 0.0f;
 	}
 
+	/* 文字の挿入
+	 * 　（１）与えられた文字列を現在表示中の文字の次に挿入する。
+	 * 　（２）なお、もしも特定の位置に文字を挿入したい場合は通常の文字列関数Insertを任意に使って、どうぞ。
+	 */
+	public void insertString(string str) {
+		text = text.Insert(i,str);
+	}
 
+	/* 表示文字列の削除
+	 * 　（１）表示しているすべての文字と、これから表示するすべての文字列を全削除する。
+	 * 　（２）一度削除したら元に戻せなくなる。
+	 */
 	public void removeText(){
 		textComponent.text = "";
 		textBuff = "";
 	}
 
+	/* ウィンドウの削除
+	 * 　（１）親となるCanvasもろとも削除してしまう。
+	 * 　（２）GameObjectをそもそも削除するのでその後の、操作はすべて無効になる。
+	 */
 	public void removeWindow(){
-		GameObject.Destroy (this.transform.parent.gameObject);
+		Destroy (transform.parent.gameObject);
 	}
 
 
@@ -209,18 +230,29 @@ public class Writer : MonoBehaviour {
 
 	//文中に登場させることのできるコマンド（<b>など）に関するクラス
 	class CommandFunction {
+		//すべてのコマンドを一度インスタンス化する。
 		private BoldCommand boldCommand;
 		private ItalicCommand italicCommand;
 		private SizeCommand sizeCommand;
 		private ColorCommand colorCommand;
 		private WaitCommand waitCommand;
 		private SpeedCommand speedCommand;
+		private VariableCommand variableCommand;
 
+		//判定するコマンドはこの配列に格納する。
 		private Command[] commands;
+
+		//現在適応中のコマンドのリスト
 		private List<Command> applyCommands = new List<Command>();
 
+		//コマンドでWriterクラスにアクセスしたい場合（例えばウェイトなどの処理の場合）のため、Writerを保持する
 		private Writer writer;
 
+		/* コンストラクタ
+		 * 　（１）各コマンドのインスタンスを作成
+		 * 　（２）作成したインスタンスをコマンド配列に格納
+		 * 　（３）引数として取得したwriterクラスを保持する
+		 */
 		public CommandFunction(Writer writer) {
 			boldCommand = new BoldCommand();
 			italicCommand = new ItalicCommand();
@@ -228,11 +260,17 @@ public class Writer : MonoBehaviour {
 			colorCommand = new ColorCommand();
 			waitCommand = new WaitCommand(writer);
 			speedCommand = new SpeedCommand(writer);
-			Command[] commands = { boldCommand, italicCommand, sizeCommand, colorCommand, waitCommand, speedCommand };
+			variableCommand = new VariableCommand(writer);
+			Command[] commands = { boldCommand, italicCommand, sizeCommand, colorCommand, waitCommand, speedCommand,variableCommand };
 			this.commands = commands;
 			this.writer = writer;
 		}
 
+		/* 開始コマンド(<b>など)の取得
+		 * 　（１）適応中のコマンドがある場合、その開始コマンドをリスト内の昇順で返却文字列に加算していく。
+		 * 　（２）すべての適応中の開始コマンドを加算したらそれを返却。
+		 * 　（例えば"<b>秋田<i>大学</i></b>なら適当中のコマンドはbold -> italicの順。返却コマンドは<b><i>となる。"）
+		 */
 		public string getStartCommand() {
 			string retCommand = "";
 			foreach (Command c in applyCommands) {
@@ -241,6 +279,11 @@ public class Writer : MonoBehaviour {
 			return retCommand;
 		}
 
+		/* 終了コマンド(</b>など)の取得
+		 * 　（１）適応中のコマンドがある場合、その終了コマンド文字列をリスト内の降順で返却文字列に加算していく。
+		 * 　（２）すべての適応中の終了コマンドを加算したらそれを返却。
+		 * 　（例えば"<b>秋田<i>大学</i></b>なら適当中のコマンドはbold -> italicの順。返却コマンドは</i></b>となる。"）
+		 */
 		public string getEndCommand() {
 			string retCommand = "";
 			foreach (Command c in applyCommands) {
@@ -250,15 +293,28 @@ public class Writer : MonoBehaviour {
 			return retCommand;
 		}
 
+		/* 文字列へコマンドの追加
+		 * 　（１）受け取った文字列に開始コマンドと終了コマンドを上の2つのメソッドを用いて追加する。
+		 * 　（２）それを返却
+		 */
 		public string addCommands(string target) {
 			return getStartCommand() + target + getEndCommand();
 		}
 
+		/* コマンドの開始と終了の判定
+		 * 　（１）もし、受け取った文字列が終了コマンドなら終了コマンド処理をして終了
+		 * 　（２）もし、受け取った文字列が終了コマンドでないなら、開始コマンドの処理をして終了。
+		 */
 		public void checkFunctionStartEnd(string target) {
 			if (isFunctionEnd(target) == false) isFunctionStart(target);
 		}
 
-		//Unityのリッチテキストに標準装備のファンクションを検知
+		/* 開始コマンド判定
+		 * 　（１）配列に格納したコマンド達の開始コマンド判定を行う。
+		 * 　（２）開始コマンドだった場合、適応コマンドリストにそのコマンドを追加する。
+		 * 　（３）ただし、開始のみのフラグが立っていたら、追加せずに終了する。
+		 * 　（４）開始コマンドじゃなかった場合何もせず終了。
+		 */
 		public bool isFunctionStart(string target) {
 			foreach (Command c in commands) {
 				if (c.isStart(target) == true) {
@@ -270,7 +326,9 @@ public class Writer : MonoBehaviour {
 
 		}
 
-		//Unityのリッチテキストに標準装備のファンクションの終了を検知
+		/* 終了コマンド判定
+		 * 　（１）コマンドが終了コマンドなら適応コマンドリストの一番後ろを削除する。
+		 */
 		public bool isFunctionEnd(string target) {
 			foreach (Command c in commands) {
 				if (c.isEnd(target) == true) {
@@ -282,6 +340,9 @@ public class Writer : MonoBehaviour {
 
 		}
 
+		/* コマンド適応中判定
+		 * 　（１）何か適応中のコマンドがある場合はTrue
+		 */
 		public bool isCommand() {
 			if (applyCommands.Count > 0) {
 				return true;
@@ -290,13 +351,45 @@ public class Writer : MonoBehaviour {
 			}
 		}
 
+		//コマンドのクラス
+		//新規コマンドの作り方
+		//基本的に<~~~>という形のコマンドを作成できます。
+		//<b>ABCD</b>などの開いて閉じるコマンドはUnityのリッチテキストの機能なので作ってもバグります。
+		//なので自作コマンドは基本的に開始オンリーコマンドになります。（<wait=10>だけとかで</wait>はいらない。）
+		//まずCommandクラスを継承した新たなMyCommandクラスを作成します。
+		//作るメソッドは主に2つでコンストラクタとisStartクラスです。
+		//コンストラクタでは基本的にstartRegexとendRegexの初期化と、isStartOnlyフラグをTrueにすること、startCommandとendCommandの初期化をします。
+		//isStartではstartRegexがマッチしたときの処理を行います。
+		//startRegexを検知した瞬間に特定の動作（例えばWaitやらSpeedChangeやらを）行います。
+		//この時、もし上位クラスのWriterにアクセスしたい場合はコンストラクタの引数からWriterインスタンスを取得するようにしましょう。
+		//詳しいやり方はWaitCommandあたりを見ながら実装してみてください。
+		//また、Writerクラスにしてほしい処理がある場合はその都度、Writerクラスにメソッドを追加しましょう。
+		//isStartでコマンドにマッチし、処理を行ったあとはTrue、マッチしなかった場合のみFalseを返却させます。
+		//また、isStartメソッドは親クラスCommandではvirtual宣言されているため、overrideをすることで、完全な上書きをします。
+		//この辺はC# overrideあたりで勉強してください。
+		//また、追加したいコマンドはもしかしたらイベントスクリプトの方で実行したほうが良い場合があります。
+		//部分的な文字列の状態、表示速度等に関するコマンド以外はそちらに書いたほうが良いと思うので注意しましょう。（別にやってもいいけど冗長する気しかしない）
+		//正規表現は便利ですが少し実行速度に難ありの可能性があります。が、コマンドの文字列判定や抽出はコード化するとかなり長くなるし、正規表現で書いたほうが気持ちいいのじゃ。
+		//読んでもわからない方はコード理解して、どうぞ。
+		//（長文ニキおっつおっつ）
 		class Command {
+			//開始コマンドの正規表現
 			protected Regex startRegex;
+			//終了コマンドの正規表現
 			protected Regex endRegex;
+			//終了コマンド返却の際、返却する文字列
 			public string endCommand = null;
+			//開始コマンド返却の際、返却する文字列
 			public string startCommand = null;
+			//開始のみのコマンドかどうか
 			public bool isStartOnly = false;
 
+			/* 開始コマンド判定
+			 * 　（１）開始コマンドの正規表現にマッチしていた場合
+			 * 　（２）もし開始コマンド文字列が空なら、受け取った文字列を開始コマンド文字列とする。
+			 * 　（３）そしてTrueを返却する。
+			 * 　（４）マッチしなかったらFalse
+			 */
 			public virtual bool isStart(string target) {
 				if (startRegex.Match(target).Success) {
 					if (startCommand == "") startCommand = target;
@@ -305,6 +398,12 @@ public class Writer : MonoBehaviour {
 					return false;
 				}
 			}
+			/* 終了コマンド判定
+			 * 　（１）終了コマンドの正規表現にマッチしていた場合
+			 * 　（２）もし終了コマンド文字列が空なら、受け取った文字列を終了コマンド文字列とする。
+			 * 　（３）そしてTrueを返却する。
+			 * 　（４）マッチしなかったらFalse
+			 */
 			public virtual bool isEnd(string target) {
 				if (endRegex.Match(target).Success) {
 					if (endCommand == "") endCommand = target;
@@ -313,16 +412,23 @@ public class Writer : MonoBehaviour {
 					return false;
 				}
 			}
+			/* 開始コマンド返却
+			 * 　（１）開始コマンドがNullじゃなかったら返却
+			 */
 			public virtual string getStartCommand() {
 				if (startCommand != null) return startCommand;
 				else return "";
 			}
+			/* 終了コマンド返却
+			 * 　（１）終了コマンドがNullじゃなかったら返却
+			 */
 			public virtual string getEndCommand() {
 				if (endCommand != null) return endCommand;
 				else return "";
 			}
 		}
 
+		//文字を太字にするボールドコマンド
 		class BoldCommand : Command {
 			public BoldCommand() {
 				startRegex = new Regex(@"<\s*b\s*>");
@@ -331,6 +437,7 @@ public class Writer : MonoBehaviour {
 				endCommand = "</b>";
 			}
 		}
+		//文字をイタリックにするイタリックコマンド
 		class ItalicCommand : Command {
 			public ItalicCommand() {
 				startRegex = new Regex(@"<\s*i\s*>");
@@ -339,6 +446,7 @@ public class Writer : MonoBehaviour {
 				endCommand = "</i>";
 			}
 		}
+		//文字のサイズを変更するサイズコマンド
 		class SizeCommand : Command {
 			public SizeCommand() {
 				startRegex = new Regex(@"<\s*size\s*=\s*\d+>");
@@ -347,6 +455,7 @@ public class Writer : MonoBehaviour {
 				endCommand = "</size>";
 			}
 		}
+		//文字の色を変更するカラーコマンド
 		class ColorCommand : Command {
 			public ColorCommand() {
 				startRegex = new Regex(@"<\s*color\s*=\s*.+>");
@@ -355,18 +464,31 @@ public class Writer : MonoBehaviour {
 				endCommand = "</color>";
 			}
 		}
+		//文字表示中に表示待ちを行うウェイトコマンド
 		class WaitCommand : Command {
+			//ウェイトはWriterのメソッドで行うためコンストラクタから取得する。
 			private Writer writer;
+			//ウェイト時間
 			private float waitTime = 0.0f;
+			
+			/* コンストラクタ
+			 * 　（１）Writerを取得
+			 * 　（２）正規表現を記述
+			 * 　（３）開始限定コマンドとする。
+			 */
 			public WaitCommand(Writer writer) {
 				startRegex = new Regex(@"<\s*wait\s*=\s*\d+(\.\d+)?>");
 				endRegex = new Regex(@"<\s*/wait\s*>");
 				this.writer = writer;
 				isStartOnly = true;
 			}
+			/* 開始判定
+			 * 　（１）もし、開始コマンド正規表現と受け取った文字列がマッチしていたら
+			 * 　（２）受け取った文字列の中からウェイト時間を取得
+			 * 　（３）writerのウェイトメソッドにウェイト時間を渡して実行
+			 */
 			public override bool isStart(string target) {
 				if (startRegex.Match(target).Success) {
-					if (startCommand == "") startCommand = target;
 					Regex num = new Regex(@"[^\.*0-9]");
 					writer.wait(float.Parse(num.Replace(target, "")));
 					return true;
@@ -375,6 +497,7 @@ public class Writer : MonoBehaviour {
 				}
 			}
 		}
+		//文字表示のスピードを変更するスピードコマンド
 		class SpeedCommand : Command {
 			private Writer writer;
 			private float waitTime = 0.0f;
@@ -389,6 +512,41 @@ public class Writer : MonoBehaviour {
 					if (startCommand == "") startCommand = target;
 					Regex num = new Regex(@"[^\.*0-9]");
 					writer.speedChange(float.Parse(num.Replace(target, "")));
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+		//イベント変数に格納された文字列を表示するバリアブルコマンド
+		class VariableCommand : Command {
+			private Writer writer;
+			private Regex strReg = new Regex(@"("")(?<str>\s*.+\s*)("")");
+			private Regex numReg = new Regex(@"(<\s*var\s*=\s*)|(\s*>)");
+			public VariableCommand(Writer writer) {
+				startRegex = new Regex(@"<\s*var\s*=\s*.+\s*>");
+				endRegex = new Regex(@"<\s*/var\s*>");
+				this.writer = writer;
+				isStartOnly = true;
+			}
+			public override bool isStart(string target) {
+				if (startRegex.Match(target).Success) {
+					string value = "";
+					//文字列モード
+					if (strReg.Match(target).Success) {
+						value = GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().getVariable(strReg.Match(target).Groups["str"].Value).getString();
+					//IDモード
+					} else {
+						int id = 0;
+						if (int.TryParse(numReg.Replace(target, " ").Trim(), out id)) {
+							value = GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().getVariable(id).getString();
+						} else {
+							Debug.Log("<var>の値がおかしい : "+ id + "\n"+ numReg.Replace(target, " ").Trim());
+							value = "";
+						}
+					}
+					Debug.Log("" + value);
+					writer.insertString(value);
 					return true;
 				} else {
 					return false;
