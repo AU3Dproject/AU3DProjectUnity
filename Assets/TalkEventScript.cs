@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class TalkEventScript : MonoBehaviour {
 
@@ -14,9 +15,14 @@ public class TalkEventScript : MonoBehaviour {
 	}
 	public GameObject textWindow;
 	private System.IO.StringReader stringReader;
-	GameObject canvas;
+	GameObject canvas = null;
 	private float time = 2.0f;
 	int m = 0;
+
+	private bool isWait = false;
+	public bool isExecute = false;
+
+	private List<string> scriptLines = new List<string>();
 
 	[TextArea(10, 10000)]
 	[Tooltip(
@@ -29,7 +35,6 @@ public class TalkEventScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-		canvas = Instantiate(textWindow, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 		stringReader = new System.IO.StringReader(eventScript);
 	}
 
@@ -37,31 +42,44 @@ public class TalkEventScript : MonoBehaviour {
 	void Update() {
 		//stringReader = new System.IO.StringReader(eventScript);
 
-		time -= Time.deltaTime;
-
-		if (time < 0) {
-			if (m == 0) {
-				Execute();
-				Debug.Log(time);
-			}
-			m = 1;
-		} else {
+		if (isExecute) {
+			Execute();
 		}
+
 	}
 
 	void Execute() {
-		while (stringReader.Peek() > -1) {
+
+		if (canvas == null) {
+			canvas = Instantiate(textWindow, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+		}
+
+		if (isWait) {
+			if (Input.GetButtonDown("Submit")) {
+				isWait = false;
+			}
+		}
+		while (isWait == false && stringReader.Peek() > -1) {
 			string line = stringReader.ReadLine();
 			Debug.Log(line);
 			if (isFunction(line)) {
 				functionExecute();
 			} else if (line == "[p]") {
-				canvas.transform.GetChild(0).GetComponent<Writer>().isTextActive = true;
+				Debug.Log("p:"+line);
+				isWait = true;
 			} else if (line == "[l]") {
+				Debug.Log("l:"+line);
 				canvas.transform.GetChild(0).GetComponent<Writer>().text = "";
+				canvas.transform.GetChild(0).GetComponent<Writer>().removeText();
 			} else {
+				Debug.Log("view:"+line);
 				canvas.transform.GetChild(0).GetComponent<Writer>().text += (line+"\n");
+				canvas.transform.GetChild(0).GetComponent<Writer>().isTextActive = true;
 			}
+			
+		}
+		if (isWait == false && stringReader.Peek() <= -1 && canvas.transform.GetChild(0).GetComponent<Writer>().isTextActive == false) {
+			GameObject.Destroy(canvas);
 		}
 	}
 
@@ -71,6 +89,10 @@ public class TalkEventScript : MonoBehaviour {
 
 	bool isFunction(string target) {
 		return false;
+	}
+
+	public void setWait(bool wait) {
+		isWait = wait;
 	}
 }
 

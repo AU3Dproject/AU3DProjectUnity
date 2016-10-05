@@ -20,6 +20,9 @@ public class Writer : MonoBehaviour {
 	[Tooltip("テキストの表示速度[秒]（デフォルトは0.05秒）")]
     public float textVisibleTime = 0.05f;
 
+	[Tooltip("表示するテキストの最大行数（これに合わせてウィンドウがリサイズされることはない。そっちは手動でやってね♪）")]
+	public int maxLine = 3;
+
 	[Tooltip("効果音再生を除外する文字")]
 	public char[] noSoundCharacters = {' ','　','\n'};
 
@@ -33,14 +36,16 @@ public class Writer : MonoBehaviour {
     private string command;
 	//文字表示の際の音声
 	private AudioSource textSound;
-	//実際に文字を表示してくれるコンポーネント（通常はこのgameObjectの子に存在するTextComponent）
-    private Text textComponent;
+	//実際に文字を表示してくれるコンポーネント
+    public Text textComponent;
 	//コマンドの検出等を行うインスタンス
 	private CommandFunction commandFunction;
 	//コマンド処理を行うためのテキストのバッファ(一時保管庫)
 	private string textBuff = "";
 	//スキップ状態を表す変数
 	private bool isSkip = false;
+
+	private int nowLine = 0;
 
 
     /* Start
@@ -49,7 +54,6 @@ public class Writer : MonoBehaviour {
      * 　（３）コマンドファンクションのインスタンス化
      */
     void Start() {
-        textComponent = transform.FindChild("Text").GetComponent<Text>();
 		textSound = GetComponent<AudioSource>();
 		commandFunction = new CommandFunction(this);
     }
@@ -74,6 +78,7 @@ public class Writer : MonoBehaviour {
 
 
 				do{
+
 					//次の表示文字の抽出
 					nextString = getStringSingle (text, i++);
 
@@ -106,7 +111,7 @@ public class Writer : MonoBehaviour {
 					}else{
 						textBuff += nextString;
 					}
-
+					
 				}while((textVisibleTime <= 0 || isSkip) && i < text.Length);
 
 				//コマンドファンクションインスタンスで何かのコマンドが登録されている場合、登録コマンドを文字に付加して文字を表示
@@ -119,7 +124,7 @@ public class Writer : MonoBehaviour {
 				textComponent.text += textBuff;
 
 				//テキスト表示に伴う効果音の再生（）
-				if (nextString != " " && nextString != "　" && nextString != "\n") {
+				if (isSound(nextString)) {
 					textSound.Play ();
 				}
 
@@ -137,6 +142,7 @@ public class Writer : MonoBehaviour {
             i = 0;
             time = 0.0f;
 			isSkip = false;
+			
         }
 
 		//デバッグ用（Oキーをおした時一括ですべてを表示する。）
