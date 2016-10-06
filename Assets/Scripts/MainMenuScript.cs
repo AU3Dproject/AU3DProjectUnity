@@ -19,13 +19,17 @@ public class MainMenuScript : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         if (Input.GetButtonDown("Menu")) {
-            se.PlayOneShot(se.clip);
+            
+			//閉じるとき
             if (menuCanvas.gameObject.activeInHierarchy) {
-                EventSystem.current.SetSelectedGameObject(null);
+				se.PlayOneShot(se.clip);
+				EventSystem.current.SetSelectedGameObject(null);
                 menuCanvas.gameObject.SetActive(false);
                 PlayerControllerScript.activeFlag = true;
-            } else {
-                menuCanvas.gameObject.SetActive(true);
+			//開くとき
+			} else if(PlayerControllerScript.activeFlag) {
+				se.PlayOneShot(se.clip);
+				menuCanvas.gameObject.SetActive(true);
                 if(first.activeInHierarchy) EventSystem.current.SetSelectedGameObject(first);
                 PlayerControllerScript.activeFlag = false;
             }

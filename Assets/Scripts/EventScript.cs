@@ -16,6 +16,8 @@ public class EventScript : MonoBehaviour {
 	//PlayerObject
 	private GameObject player = null;
 
+	private TalkEventScript eventScript = null;
+
 	private bool isEventEnd = true;
 
 	/* Start
@@ -24,6 +26,7 @@ public class EventScript : MonoBehaviour {
 	void Start () {
 		nearObject.enabled = false;
 		player = (GameObject.Find("/PlayerController").GetComponent<PlayerControllerScript>()).Player;
+		eventScript = GetComponent<TalkEventScript>();
 	}
 	
 	/* Update
@@ -36,22 +39,16 @@ public class EventScript : MonoBehaviour {
 	void Update () {
 
 		//Player接近時
-		if (isAccess ()) {
+		if (isAccess () && !eventScript.isExecute && PlayerControllerScript.activeFlag && isEventEnd) {
 
 			//接近時Object表示
 			nearObject.enabled = true;
 			//Event開始ボタン押下
 			if(Input.GetButtonDown("Submit")){
 				//イベントの開始とPlayer動作停止
-				/*if(blockName!="" && flowchart!=null && isFlowchartActive()==false) {
-					flowchart.ExecuteBlock(blockName);
-					PlayerControllerScript.activeFlag=false;
-					if(isEventEnd==true)isEventEnd=false;
-				}*/
-			}
-			//イベント中はPlayerとNPCを向かい合わせる。
-			if(this.isFlowchartActive() == true){
-				if(isFace2face) face2face ();
+				eventScript.isExecute = true;
+				PlayerControllerScript.activeFlag = false;
+				isEventEnd = false;
 			}
 
 		} else {
@@ -60,9 +57,15 @@ public class EventScript : MonoBehaviour {
 		}
 
 		//イベント終了時にPlayerの動作を開始する
-		if(!this.isFlowchartActive() && PlayerControllerScript.activeFlag==false&&isEventEnd==false){
+		if(!eventScript.isExecute && PlayerControllerScript.activeFlag==false && !isEventEnd){
 			PlayerControllerScript.activeFlag=true;
-			isEventEnd=true;
+			isEventEnd = true;
+		}
+
+		//イベント中はPlayerとNPCを向かい合わせる。
+		if (eventScript.isExecute == true) {
+			if (isFace2face)
+				face2face();
 		}
 
 	}
@@ -92,29 +95,6 @@ public class EventScript : MonoBehaviour {
 		this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(to), 0.1f);
 		to = new Vector3 (this.transform.position.x - player.transform.position.x, 0, this.transform.position.z - player.transform.position.z);
 		player.transform.rotation = Quaternion.Slerp(player.transform.rotation, Quaternion.LookRotation(to), 0.1f);
-	}
-
-
-	/* Event実行判定
-	 * 　（１）Flowchartの各Blockを取得し実行中か判定する。
-	 * 　（２）実行中ならTrue
-	 * 　（３）ちなみにFlowchart設定ミスやBlock無しFlowchartの場合エラー出るんで
-	 */
-	private bool isFlowchartActive(){
-
-        if (GameObject.Find("/MenuDialog") != null) return true;
-
-		/*Block [] blocks = flowchart.transform.GetComponents<Block>();
-		if (blocks != null) {
-			foreach (Block block in blocks) {
-				if (block.IsExecuting ()){
-					return true;
-				}else{
-					continue;
-				}
-			}
-		}*/
-		return false;
 	}
 
 }

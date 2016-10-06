@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class TalkEventScript : MonoBehaviour {
 
@@ -36,6 +37,7 @@ public class TalkEventScript : MonoBehaviour {
 	// Use this for initialization
 	void Start() {
 		stringReader = new System.IO.StringReader(eventScript);
+		textWindow = (GameObject)Resources.Load("TalkEvent/TalkEventCanvas");
 	}
 
 	// Update is called once per frame
@@ -54,32 +56,34 @@ public class TalkEventScript : MonoBehaviour {
 			canvas = Instantiate(textWindow, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 		}
 
-		if (isWait) {
-			if (Input.GetButtonDown("Submit")) {
+
+		if (Input.GetButtonDown("Submit")) {
+			if (canvas.transform.GetChild(0).GetComponent<Writer>().isTextActive) {
+				canvas.transform.GetChild(0).GetComponent<Writer>().allVisible();
+			}else if (isWait) {
 				isWait = false;
 			}
 		}
 		while (isWait == false && stringReader.Peek() > -1) {
 			string line = stringReader.ReadLine();
-			Debug.Log(line);
 			if (isFunction(line)) {
 				functionExecute();
 			} else if (line == "[p]") {
-				Debug.Log("p:"+line);
 				isWait = true;
 			} else if (line == "[l]") {
-				Debug.Log("l:"+line);
 				canvas.transform.GetChild(0).GetComponent<Writer>().text = "";
 				canvas.transform.GetChild(0).GetComponent<Writer>().removeText();
 			} else {
-				Debug.Log("view:"+line);
-				canvas.transform.GetChild(0).GetComponent<Writer>().text += (line+"\n");
+				canvas.transform.GetChild(0).GetComponent<Writer>().text += (line + "\n");
 				canvas.transform.GetChild(0).GetComponent<Writer>().isTextActive = true;
 			}
 			
 		}
 		if (isWait == false && stringReader.Peek() <= -1 && canvas.transform.GetChild(0).GetComponent<Writer>().isTextActive == false) {
-			GameObject.Destroy(canvas);
+			Destroy(canvas);
+			stringReader = new System.IO.StringReader(eventScript);
+			isExecute = false;
+			Debug.Log("EventEnd");
 		}
 	}
 
@@ -93,6 +97,25 @@ public class TalkEventScript : MonoBehaviour {
 
 	public void setWait(bool wait) {
 		isWait = wait;
+	}
+
+
+
+	public class Function{
+		Regex regex;
+		TalkEventScript eventScript;
+		public virtual bool isFunction(string target) {
+			return regex.IsMatch(target);
+		}
+		public virtual void Execute() {
+
+		}
+	}
+
+	public class SelectFunction : Function {
+		public SelectFunction(TalkEventScript script){
+			//ここ！
+		}
 	}
 }
 

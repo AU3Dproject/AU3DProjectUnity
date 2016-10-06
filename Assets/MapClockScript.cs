@@ -8,6 +8,7 @@ public class MapClockScript : MonoBehaviour {
 	[SerializeField]
 	[Tooltip("マップを時計みたいな感じにするかどうか")]
 	public bool mapClockMode = true;
+	private RectTransform t;
 
 	private Image imageComponent;
 	private virtualTimeScript virtualTime;
@@ -20,7 +21,6 @@ public class MapClockScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
 		float timeRate = virtualTime.getTimeRateOfDay();
 
 		if (mapClockMode) {
