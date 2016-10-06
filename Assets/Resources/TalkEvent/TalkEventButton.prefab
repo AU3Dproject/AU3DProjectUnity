@@ -80,7 +80,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u3053\u3053\u306F\u3069\u3053\u3067\u3059\u304B\uFF1F"
+  m_Text: "\u304B\u304D\u304F\u3051\u3053"
 --- !u!114 &114000011678940828
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -68,7 +68,7 @@ public class Writer : MonoBehaviour {
 		textBuff = "";
 
 		//表示開始であれば処理開始
-		if (isTextActive) {
+		if (isTextActive && text != "") {
 
 			//時間の計測を行う
             time += Time.deltaTime;
@@ -144,11 +144,6 @@ public class Writer : MonoBehaviour {
 			isSkip = false;
 			
         }
-
-		//デバッグ用（Oキーをおした時一括ですべてを表示する。）
-		if(Input.GetKey(KeyCode.O)){
-			allVisible();
-		}
 
     } 
 
@@ -551,7 +546,6 @@ public class Writer : MonoBehaviour {
 							value = "";
 						}
 					}
-					Debug.Log("" + value);
 					writer.insertString(value);
 					return true;
 				} else {

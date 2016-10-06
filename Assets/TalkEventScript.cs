@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.IO;
 
 public class TalkEventScript : MonoBehaviour {
 
@@ -12,10 +13,6 @@ public class TalkEventScript : MonoBehaviour {
 	[Tooltip("このイベントに関するただの説明")]
 	public string description;
 
-	//テキストウィンドウのGameObjectを入れておく
-	private GameObject textWindow;
-	//イベントスクリプトを一行ずつ読むReader
-	private System.IO.StringReader stringReader;
 	//テキストウィンドウを操作するためのGameObject
 	GameObject canvas = null;
 	//入力待ち判定
@@ -24,8 +21,15 @@ public class TalkEventScript : MonoBehaviour {
 	private bool isSelect = false;
 	//実行可能状態
 	public bool isExecute = false;
-	//未実装（スクリプトを行単位で格納しておくリスト）
+	//スクリプトを行単位で格納しておくリスト
 	private List<string> scriptLines = new List<string>();
+	//ラベルをラベル名と行数とで格納しておくリスト
+	private Dictionary<string, int> scriptLabel = new Dictionary<string, int>();
+	private int lineNum = 0;
+	private Writer writer = null;
+	private TalkEventSelectButton selectButtonManager = null;
+	private AudioSource audioSource = null;
+	private Function[] functions;
 	//実行のタイプ
 	public enum ExecuteType {
 		attach, auto, parallel,
@@ -36,7 +40,9 @@ public class TalkEventScript : MonoBehaviour {
 		"イベント本文です。\n" +
 		"command\n" +
 		"[p] : 入力待ち\n" +
-		"[l] : 改ページ"
+		"[l] : 改ページ\n" +
+		"[add_select ボタン名 ジャンプラベル] : 選択肢の追加\n" +
+		"[open_select] : 選択肢の表示\n"
 	)]
 	public string eventScript = "";
 
@@ -45,8 +51,18 @@ public class TalkEventScript : MonoBehaviour {
 	 * 　（２）話す時に表示するTextWindowとなるPrefabをResourcesフォルダからロード
 	 */
 	void Start() {
-		stringReader = new System.IO.StringReader(eventScript);
-		textWindow = (GameObject)Resources.Load("TalkEvent/TalkEventCanvas");
+		canvas = Instantiate((GameObject)Resources.Load("TalkEvent/TalkEventCanvas"), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+		writer = canvas.transform.GetChild(0).GetComponent<Writer>();
+		selectButtonManager = canvas.transform.GetChild(1).GetComponent<TalkEventSelectButton>();
+		audioSource = GameObject.Find("/BGMManager").GetComponent<AudioSource>();
+		canvas.SetActive(false);
+		loadEventScript();
+
+		Function[] tmp = {
+			new AddSelectFunction(this),new OpenSelectFunction(this),new PutWaitFunction(this),new LinesNewFunction(this),new GoToFunction(this),new PlayBGMFunction(this)
+		};
+
+		functions = tmp;
 	}
 
 	/* Update
@@ -76,50 +92,71 @@ public class TalkEventScript : MonoBehaviour {
 	 */
 	void Execute() {
 
-		//textWindowの生成処理
-		if (canvas == null) {
-			canvas = Instantiate(textWindow, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
-		}
-
 		//TalkEvent中の入力操作
-		if (Input.GetButtonDown("Submit")) {
-			if (canvas.transform.GetChild(0).GetComponent<Writer>().isTextActive) {
-				canvas.transform.GetChild(0).GetComponent<Writer>().allVisible();
-			}else if (isWait) {
+		if (Input.GetButtonDown("Submit") && !isSelect) {
+			if (writer.isTextActive) {
+				writer.allVisible();
+			} else if (isWait) {
 				isWait = false;
 			}
 		}
 
 		//スクリプト読み込み・実行
-		while (isWait == false && stringReader.Peek() > -1) {
-			string line = stringReader.ReadLine();
-			if (isFunction(line)) {
-				functionExecute();
-			} else if (line == "[p]") {
-				isWait = true;
-			} else if (line == "[l]") {
-				canvas.transform.GetChild(0).GetComponent<Writer>().text = "";
-				canvas.transform.GetChild(0).GetComponent<Writer>().removeText();
-			} else {
-				canvas.transform.GetChild(0).GetComponent<Writer>().text += (line + "\n");
-				canvas.transform.GetChild(0).GetComponent<Writer>().isTextActive = true;
+		while (!isWait && !isSelect && lineNum < scriptLines.Count) {
+			string line = scriptLines[lineNum];
+			if (!functionExecute(line) && line != "") {
+				if (!canvas.activeInHierarchy) {
+					canvas.SetActive(true);
+				}
+				writer.text += (line + "\n");
+				writer.isTextActive = true;
 			}
-			
+			lineNum++;
+		}
+
+		if (isSelect && !writer.isTextActive) {
+			string answer = selectButtonManager.getAnswer();
+			if (answer != "") {
+				goLabel(answer);
+				isSelect = false;
+				writer.text = "";
+				selectButtonManager.closeButtons();
+			}
 		}
 
 		//スクリプト終了処理
-		if (isWait == false && stringReader.Peek() <= -1 && canvas.transform.GetChild(0).GetComponent<Writer>().isTextActive == false) {
-			Destroy(canvas);
-			stringReader = new System.IO.StringReader(eventScript);
+		if (!isWait && scriptLines.Count <= lineNum && !writer.isTextActive && !isSelect) {
+			writer.removeText();
+			writer.text = "";
+			canvas.SetActive(false);
+			lineNum = 0;
 			isExecute = false;
+			isWait = false;
 		}
 	}
 
-	void functionExecute() {
-
+	private void loadEventScript() {
+		StringReader stringReader = new StringReader(eventScript);
+		int i = 0;
+		while (stringReader.Peek() > -1) {
+			string line = stringReader.ReadLine();
+			if (Regex.IsMatch(line, @"^[a-zA-z]+?\w*:$")) {
+				scriptLabel.Add(line.Substring(0, line.Length - 1), i);
+				line = "";
+			}
+			scriptLines.Add(line);
+			i++;
+		}
+		stringReader.Close();
 	}
 
-	bool isFunction(string target) {
+	public bool functionExecute(string target) {
+		foreach (Function f in functions) {
+			if (f.isFunction(target)) {
+				f.Execute();
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -130,69 +167,126 @@ public class TalkEventScript : MonoBehaviour {
 		isWait = wait;
 	}
 
+	public void setSelectMode(bool select) {
+		isSelect = select;
+	}
+
+	public void activeWindow(bool visible) {
+		canvas.SetActive(visible);
+	}
+
+	public void goLabel(string label) {
+		int num;
+		if (scriptLabel.TryGetValue(label, out num)) {
+			lineNum = num+1;
+		}
+	}
+
 
 
 	public class Function{
-		protected Regex regex;
+		protected string regexString = "";
 		protected TalkEventScript eventScript;
 		public virtual bool isFunction(string target) {
-			return regex.IsMatch(target);
+			return Regex.IsMatch(target,regexString);
+		}
+		public virtual string subBracket(string target) {
+			return target.Substring(1, target.Length - 2);
 		}
 		public virtual void Execute() {
 
 		}
 	}
 
-	public class SelectFunction : Function {
-		public SelectFunction(TalkEventScript script){
-			regex = @"\[select.+\]";
+	public class AddSelectFunction : Function {
+		private string[] arguments = new string[2];
+		public AddSelectFunction(TalkEventScript script){
+			regexString = @"^\[add_select\s+.+\s+.+\]$";
 			eventScript = script;
 		}
+		public override bool isFunction(string target) {
+			if (base.isFunction(target)) {
+				string[] tmp = subBracket(target).Split(' ');
+				arguments[0] = tmp[1];
+				arguments[1] = tmp[2];
+				return true;
+			}
+			return false;
+		}
 		public override void Execute(){
-			
+			eventScript.selectButtonManager.addButton(arguments[0],arguments[1]);
+		}
+	}
+
+	public class OpenSelectFunction : Function {
+		private string[] arguments = new string[2];
+		public OpenSelectFunction(TalkEventScript script) {
+			regexString = @"^\[open_select\]$";
+			eventScript = script;
+		}
+		public override void Execute() {
+			eventScript.selectButtonManager.openButtons();
+			eventScript.setSelectMode(true);
+		}
+	}
+
+	public class PutWaitFunction : Function {
+		public PutWaitFunction(TalkEventScript script) {
+			regexString = @"^\[p\]$";
+			eventScript = script;
+		}
+		public override void Execute() {
+			eventScript.setWait(true);
+		}
+	}
+
+	public class LinesNewFunction : Function {
+		public LinesNewFunction(TalkEventScript script) {
+			eventScript = script;
+			regexString = @"^\[l\]$";
+		}
+		public override void Execute() {
+			eventScript.writer.text = "";
+			eventScript.writer.removeText();			
+		}
+	}
+
+	public class GoToFunction : Function {
+		private string argument = "";
+		public GoToFunction(TalkEventScript script) {
+			eventScript = script;
+			regexString = @"^\[goto\s.+\]$";
+		}
+		public override bool isFunction(string target) {
+			if (base.isFunction(target)) {
+				string[] tmp = subBracket(target).Split(' ');
+				argument = tmp[1];
+				return true;
+			}
+			return false;
+		}
+		public override void Execute() {
+			eventScript.goLabel(argument);
+		}
+	}
+
+	public class PlayBGMFunction : Function {
+		string argument= "";
+		public PlayBGMFunction(TalkEventScript script) {
+			eventScript = script;
+			regexString = @"^\[play_bgm\s+.+\]$";
+		}
+		public override bool isFunction(string target) {
+			if (base.isFunction(target)) {
+				string[] tmp = subBracket(target).Split(' ');
+				argument = tmp[1];
+				return true;
+			}
+			return false;
+		}
+		public override void Execute() {
+			eventScript.audioSource.clip = Resources.Load(argument) as AudioClip;
+			eventScript.audioSource.Play();
 		}
 	}
 }
-/*
-
-[select ここはどこ？ where]
-[select BGMかけて！ bgm]
-[select さよなら goodbye]
-
-where:
-秋田大学だよ。
-[goto end]
-
-bgm:
-[bgm_start ac]
-[goto end]
-
-goodbye:
-さよなら。
-
-end:
-
-
-
-
-[select 表示文字 ジャンプラベル]
-
-select命令を検知し、
-次の行がselectならば2行分、更にその次の行がselectなら3行分と、最大８回次の行を見に行きインクリメントする。
-
-TalkEventSelectButtonにアクセスし検知した数分のselectをボタンとして作成
-その時、ターゲット文字列の最初と最後の文字を削除し、残った部分をスペースでスプリットする。
-２つめの文字を表示文字としてTalkEventSelectButtonへ渡す。
-この時isSelectをTrueにし、ウェイト状態にする。
-TalkEventSelectButtonからAnswerとして正の整数を取得できたならその整数回目に出てきたボタンの３つめの引数であるジャンプラベルを実行する。
-つまりAnswer（解答）が出たらgoto命令を実行して終了
-
-[goto ジャンプラベル]
-
-ジャンプラベルへ飛ぶ
-考えたんだけどやっぱり、文字列のリストとしてスクリプトを保管しておき、利用したほうが良いのではないか？
-また、ラベルに関してはMapだかDictionaryだかをつかってラベル文字に対する行数という形で文字列と整数で保存すれば良いのでは？
-そして文字列リストから手に入れた整数を使いindexOfでその行からスタートみたいにしたほうが良さそう
-それなら行移動も簡単だし面倒なstringReaderも使わなくてすむよね。
-
-*/
