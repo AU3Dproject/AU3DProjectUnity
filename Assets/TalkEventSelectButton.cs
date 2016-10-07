@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class TalkEventSelectButton : MonoBehaviour {
 
@@ -36,6 +37,24 @@ public class TalkEventSelectButton : MonoBehaviour {
 			instant.GetComponent<Button>().onClick.AddListener(() => setAnswer(instant));
 			buttons.Add(instant);
 		}
+		if(buttons[0].activeInHierarchy) EventSystem.current.SetSelectedGameObject(buttons[0]);
+		for (int i = 0; i < noButton; i++) {
+			Navigation nav = buttons [i].GetComponent<Button> ().navigation;
+			nav.mode = Navigation.Mode.Explicit;
+			if (i - 1 >= 0) {
+				nav.selectOnUp = buttons [i - 1].GetComponent<Button> ();
+			}else {
+				nav.selectOnUp = buttons [noButton-1].GetComponent<Button> ();
+			}
+			if (i + 1 < noButton) {
+				nav.selectOnDown = buttons [i + 1].GetComponent<Button> ();
+			} else {
+				nav.selectOnDown = buttons [0].GetComponent<Button> ();
+			}
+			nav.selectOnLeft = null;
+			nav.selectOnRight = null;
+			buttons [i].GetComponent<Button> ().navigation = nav;
+		}
 	}
 	public void closeButtons() {
 		for (int i = 0; i < noButton; i++) {
@@ -59,6 +78,7 @@ public class TalkEventSelectButton : MonoBehaviour {
 	public void setAnswer(GameObject ans) {
 		answerLabel = ans.name;
 		isAnswer = true;
+		EventSystem.current.SetSelectedGameObject(null);
 	}
 	public string getAnswer() {
 		if (isAnswer) {
