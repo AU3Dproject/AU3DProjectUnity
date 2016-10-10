@@ -7,8 +7,6 @@ public class EventScript : MonoBehaviour {
 	[SerializeField]
 	//Playerの接近時表示Object
 	public MeshRenderer nearObject;
-	//Eventの開始Block
-	public string blockName ="";
 	//Playerの接近範囲
 	public float nearDistance = 1.0f;
     //向き合わせを行うかどうか

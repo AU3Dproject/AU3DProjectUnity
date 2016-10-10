@@ -261,6 +261,7 @@ MonoBehaviour:
   text: 
   isTextActive: 0
   textVisibleTime: 0.05
+  maxLine: 3
   noSoundCharacters: 200000300a000c300d30
   textComponent: {fileID: 0}
 --- !u!114 &114000012758596568

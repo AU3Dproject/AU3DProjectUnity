@@ -4133,7 +4133,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nearObject: {fileID: 2377200}
-  blockName: navi01
   nearDistance: 1
   isFace2face: 1
 --- !u!114 &11449894

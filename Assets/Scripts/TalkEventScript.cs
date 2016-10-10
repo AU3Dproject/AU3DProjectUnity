@@ -14,7 +14,7 @@ public class TalkEventScript : MonoBehaviour {
 	public string description;
 
 	//テキストウィンドウを操作するためのGameObject
-	GameObject canvas = null;
+	private GameObject textWindow = null;
 	//入力待ち判定
 	private bool isWait = false;
 	//選択待ち判定
@@ -28,7 +28,7 @@ public class TalkEventScript : MonoBehaviour {
 	private int lineNum = 0;
 	private Writer writer = null;
 	private TalkEventSelectButton selectButtonManager = null;
-	private AudioSource audioSource = null;
+	private BGMManager audioSourceBGM = null;
 	private Function[] functions;
 	//実行のタイプ
 	public enum ExecuteType {
@@ -45,21 +45,23 @@ public class TalkEventScript : MonoBehaviour {
 		"[open_select] : 選択肢の表示\n"
 	)]
 	public string eventScript = "";
+	private string eventScriptTooltip = "";
 
 	/*　Start
 	 * 　（１）文字列を一行ずつ読み込むためのStringReaderを初期化
 	 * 　（２）話す時に表示するTextWindowとなるPrefabをResourcesフォルダからロード
 	 */
 	void Start() {
-		canvas = Instantiate((GameObject)Resources.Load("TalkEvent/TalkEventCanvas"), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
-		writer = canvas.transform.GetChild(0).GetComponent<Writer>();
-		selectButtonManager = canvas.transform.GetChild(1).GetComponent<TalkEventSelectButton>();
-		audioSource = GameObject.Find("/BGMManager").GetComponent<AudioSource>();
-		canvas.SetActive(false);
+		//canvas = Instantiate((GameObject)Resources.Load("TalkEvent/TalkEventCanvas"), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+		textWindow = GameObject.Find("/Canvases").transform.Find("TalkEventCanvas").gameObject;
+		writer = textWindow.transform.GetChild(0).GetComponent<Writer>();
+		selectButtonManager = textWindow.transform.GetChild(1).GetComponent<TalkEventSelectButton>();
+		audioSourceBGM = GameObject.Find("/Manager").GetComponent<Manager>().BGMManager;
+		textWindow.SetActive(false);
 		loadEventScript();
 
 		Function[] tmp = {
-			new AddSelectFunction(this),new OpenSelectFunction(this),new PutWaitFunction(this),new LinesNewFunction(this),new GoToFunction(this),new PlayBGMFunction(this)
+			new AddSelectFunction(this),new OpenSelectFunction(this),new PutWaitFunction(this),new LinesNewFunction(this),new GoToFunction(this),new BGMFunction(this)
 		};
 
 		functions = tmp;
@@ -105,8 +107,8 @@ public class TalkEventScript : MonoBehaviour {
 		while (!isWait && !isSelect && lineNum < scriptLines.Count) {
 			string line = scriptLines[lineNum];
 			if (!functionExecute(line) && line != "") {
-				if (!canvas.activeInHierarchy) {
-					canvas.SetActive(true);
+				if (!textWindow.activeInHierarchy) {
+					textWindow.SetActive(true);
 				}
 				writer.text += (line + "\n");
 				writer.isTextActive = true;
@@ -128,7 +130,7 @@ public class TalkEventScript : MonoBehaviour {
 		if (!isWait && scriptLines.Count <= lineNum && !writer.isTextActive && !isSelect) {
 			writer.removeText();
 			writer.text = "";
-			canvas.SetActive(false);
+			textWindow.SetActive(false);
 			lineNum = 0;
 			isExecute = false;
 			isWait = false;
@@ -172,21 +174,20 @@ public class TalkEventScript : MonoBehaviour {
 	}
 
 	public void activeWindow(bool visible) {
-		canvas.SetActive(visible);
+		textWindow.SetActive(visible);
 	}
 
 	public void goLabel(string label) {
-		int num;
+		int num = 0;
 		if (scriptLabel.TryGetValue(label, out num)) {
-			lineNum = num+1;
+			lineNum = num;
 		}
 	}
-
-
 
 	public class Function{
 		protected string regexString = "";
 		protected TalkEventScript eventScript;
+		public string description = "";
 		public virtual bool isFunction(string target) {
 			return Regex.IsMatch(target,regexString);
 		}
@@ -195,6 +196,14 @@ public class TalkEventScript : MonoBehaviour {
 		}
 		public virtual void Execute() {
 
+		}
+		//argument to variable ：　引数が変数指定されていたら変数を返却。変数指定は<var=変数名>。もしくは<var=@ID>でのID指定が可能。
+		protected string a2v(string arg) {
+			if (GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().isVariable(arg)) {
+				return GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().getVariable_Command(arg).value;
+			} else {
+				return arg;
+			}
 		}
 	}
 
@@ -207,8 +216,8 @@ public class TalkEventScript : MonoBehaviour {
 		public override bool isFunction(string target) {
 			if (base.isFunction(target)) {
 				string[] tmp = subBracket(target).Split(' ');
-				arguments[0] = tmp[1];
-				arguments[1] = tmp[2];
+				arguments[0] = a2v(tmp[1]);
+				arguments[1] = a2v(tmp[2]);
 				return true;
 			}
 			return false;
@@ -247,7 +256,7 @@ public class TalkEventScript : MonoBehaviour {
 		}
 		public override void Execute() {
 			eventScript.writer.text = "";
-			eventScript.writer.removeText();			
+			eventScript.writer.removeText();
 		}
 	}
 
@@ -260,7 +269,7 @@ public class TalkEventScript : MonoBehaviour {
 		public override bool isFunction(string target) {
 			if (base.isFunction(target)) {
 				string[] tmp = subBracket(target).Split(' ');
-				argument = tmp[1];
+				argument = a2v(tmp[1]);
 				return true;
 			}
 			return false;
@@ -270,23 +279,43 @@ public class TalkEventScript : MonoBehaviour {
 		}
 	}
 
-	public class PlayBGMFunction : Function {
-		string argument= "";
-		public PlayBGMFunction(TalkEventScript script) {
+	public class BGMFunction : Function {
+		string[] arguments = new string[2];
+		public BGMFunction(TalkEventScript script) {
 			eventScript = script;
-			regexString = @"^\[play_bgm\s+.+\]$";
+			regexString = @"^\[bgm\s+.+\s+.+\]$";
 		}
 		public override bool isFunction(string target) {
 			if (base.isFunction(target)) {
 				string[] tmp = subBracket(target).Split(' ');
-				argument = tmp[1];
+				arguments[0] = a2v(tmp[1]);
+				arguments[1] = a2v(tmp[2]);
 				return true;
 			}
 			return false;
 		}
 		public override void Execute() {
-			eventScript.audioSource.clip = Resources.Load(argument) as AudioClip;
-			eventScript.audioSource.Play();
+			switch (arguments[0]) {
+				case "play":
+					eventScript.audioSourceBGM.Play(arguments[1]);
+					break;
+				case "stop":
+					eventScript.audioSourceBGM.Stop(int.Parse(arguments[1]));
+					break;
+				case "volume":
+					eventScript.audioSourceBGM.setVolume(int.Parse(arguments[1]));
+					break;
+				case "pitch":
+					eventScript.audioSourceBGM.setPitch(int.Parse(arguments[1]));
+					break;
+				case "pan":
+					eventScript.audioSourceBGM.setPan(int.Parse(arguments[1]));
+					break;
+				default:
+					Debug.Log("未設定の構文 : " + arguments[0]);
+					break;
+			}
 		}
 	}
+
 }

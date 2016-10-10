@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 public class TalkEventValiable : MonoBehaviour,ISerializationCallbackReceiver{
 	
 	[SerializeField]
-	[Tooltip("変数。イベント時などに手軽に扱うことができる。")]
 	public Variable[] variables = {};
 
 	public Variable getVariable(int id) {
@@ -22,6 +21,23 @@ public class TalkEventValiable : MonoBehaviour,ISerializationCallbackReceiver{
 				return v;
 		}
 		return null;
+	}
+
+	public Variable getVariable_Command(string command) {
+		if (isVariable(command)) {
+			command = command.Substring(5, command.Length - 6);
+			if (command.Substring(0, 1) == "@") {
+				return getVariable(int.Parse(command.Substring(1, command.Length - 1)));
+			} else {
+				return getVariable(command);
+			}
+		} else {
+			return null;
+		}
+	}
+
+	public bool isVariable(string command) {
+		return Regex.IsMatch(command, @"^<var=.+>$") ;
 	}
 
 	public void OnAfterDeserialize() {
@@ -38,11 +54,11 @@ public class TalkEventValiable : MonoBehaviour,ISerializationCallbackReceiver{
 	[Serializable]
 	public class Variable {
 		[SerializeField]
-		[Tooltip("一意的なID。自動で定まる。")]
-		public int id;
-		[SerializeField]
 		[Tooltip("変数名。重複可能だが、名前から変数を検索する際、\nIDの小さいもののみ返却される。\n変数名に()とか[]とか\"\"とかプログラムで使いそうな文字列を使うとバグるときがあるかもしれない。")]
 		public string variableName = "";
+		[SerializeField]
+		[Tooltip("一意的なID。自動で定まる。")]
+		public int id;
         [SerializeField]
 		[Tooltip("変数の説明。メモ書きにでも使ってくらさい。特に意味は（ないです）")]
 		public string description = "";

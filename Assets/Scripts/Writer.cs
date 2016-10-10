@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
-using UnityEditor;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 
@@ -432,8 +430,8 @@ public class Writer : MonoBehaviour {
 		//文字を太字にするボールドコマンド
 		class BoldCommand : Command {
 			public BoldCommand() {
-				startRegex = new Regex(@"<\s*b\s*>");
-				endRegex = new Regex(@"<\s*/b\s*>");
+				startRegex = new Regex(@"<b>");
+				endRegex = new Regex(@"</b>");
 				startCommand = "<b>";
 				endCommand = "</b>";
 			}
@@ -441,8 +439,8 @@ public class Writer : MonoBehaviour {
 		//文字をイタリックにするイタリックコマンド
 		class ItalicCommand : Command {
 			public ItalicCommand() {
-				startRegex = new Regex(@"<\s*i\s*>");
-				endRegex = new Regex(@"<\s*/i\s*>");
+				startRegex = new Regex(@"<i>");
+				endRegex = new Regex(@"</i>");
 				startCommand = "<i>";
 				endCommand = "</i>";
 			}
@@ -450,8 +448,8 @@ public class Writer : MonoBehaviour {
 		//文字のサイズを変更するサイズコマンド
 		class SizeCommand : Command {
 			public SizeCommand() {
-				startRegex = new Regex(@"<\s*size\s*=\s*\d+>");
-				endRegex = new Regex(@"<\s*/size\s*>");
+				startRegex = new Regex(@"<size=\d+>");
+				endRegex = new Regex(@"</size>");
 				startCommand = "";
 				endCommand = "</size>";
 			}
@@ -459,8 +457,8 @@ public class Writer : MonoBehaviour {
 		//文字の色を変更するカラーコマンド
 		class ColorCommand : Command {
 			public ColorCommand() {
-				startRegex = new Regex(@"<\s*color\s*=\s*.+>");
-				endRegex = new Regex(@"<\s*/color\s*>");
+				startRegex = new Regex(@"<color=.+>");
+				endRegex = new Regex(@"</color>");
 				startCommand = "";
 				endCommand = "</color>";
 			}
@@ -478,8 +476,8 @@ public class Writer : MonoBehaviour {
 			 * 　（３）開始限定コマンドとする。
 			 */
 			public WaitCommand(Writer writer) {
-				startRegex = new Regex(@"<\s*wait\s*=\s*\d+(\.\d+)?>");
-				endRegex = new Regex(@"<\s*/wait\s*>");
+				startRegex = new Regex(@"<wait=\d+(\.\d+)?>");
+				endRegex = new Regex(@"</wait>");
 				this.writer = writer;
 				isStartOnly = true;
 			}
@@ -503,8 +501,8 @@ public class Writer : MonoBehaviour {
 			private Writer writer;
 			private float waitTime = 0.0f;
 			public SpeedCommand(Writer writer) {
-				startRegex = new Regex(@"<\s*speed\s*=\s*\d+(\.\d+)?>");
-				endRegex = new Regex(@"<\s*/speed\s*>");
+				startRegex = new Regex(@"<speed=\d+(\.\d+)?>");
+				endRegex = new Regex(@"</speed>");
 				this.writer = writer;
 				isStartOnly = true;
 			}
@@ -522,30 +520,16 @@ public class Writer : MonoBehaviour {
 		//イベント変数に格納された文字列を表示するバリアブルコマンド
 		class VariableCommand : Command {
 			private Writer writer;
-			private Regex strReg = new Regex(@"("")(?<str>\s*.+\s*)("")");
-			private Regex numReg = new Regex(@"(<\s*var\s*=\s*)|(\s*>)");
 			public VariableCommand(Writer writer) {
-				startRegex = new Regex(@"<\s*var\s*=\s*.+\s*>");
-				endRegex = new Regex(@"<\s*/var\s*>");
+				startRegex = new Regex(@"<var=.+>");
+				endRegex = new Regex(@"</var>");
 				this.writer = writer;
 				isStartOnly = true;
 			}
 			public override bool isStart(string target) {
 				if (startRegex.Match(target).Success) {
 					string value = "";
-					//文字列モード
-					if (strReg.Match(target).Success) {
-						value = GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().getVariable(strReg.Match(target).Groups["str"].Value).getString();
-					//IDモード
-					} else {
-						int id = 0;
-						if (int.TryParse(numReg.Replace(target, " ").Trim(), out id)) {
-							value = GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().getVariable(id).getString();
-						} else {
-							Debug.Log("<var>の値がおかしい : "+ id + "\n"+ numReg.Replace(target, " ").Trim());
-							value = "";
-						}
-					}
+					value = GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().getVariable_Command(target).value;
 					writer.insertString(value);
 					return true;
 				} else {
