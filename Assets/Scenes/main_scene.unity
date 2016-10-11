@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 0.2
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.09680685, g: 0.13259244, b: 0.18254748, a: 0.2}
+  m_IndirectSpecularColor: {r: 0.009545969, g: 0.015858052, b: 0.02796085, a: 0.2}
 --- !u!157 &4
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -53629,7 +53629,7 @@ SkinnedMeshRenderer:
   m_GameObject: {fileID: 948416658}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -57333,7 +57333,7 @@ SkinnedMeshRenderer:
   m_GameObject: {fileID: 1014382031}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -65475,7 +65475,7 @@ SkinnedMeshRenderer:
   m_GameObject: {fileID: 1156895558}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -94579,7 +94579,7 @@ SkinnedMeshRenderer:
   m_GameObject: {fileID: 1703777705}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
