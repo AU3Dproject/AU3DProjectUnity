@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: parkTree02
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 10601, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: _EMISSION _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -54,13 +54,19 @@ Material:
     - first:
         name: _FalloffTex
       second:
+        m_Texture: {fileID: 2800000, guid: 6b217c1b3daab4c0d96f4f0522498f16, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _GlossMap
+      second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: 19ca8651c10974e6aa4cfa5d4b20d692, type: 3}
+        m_Texture: {fileID: 2800000, guid: 576217158d0134ca1a58009103efc683, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -88,9 +94,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
-        name: _ShadowTex
+        name: _ShadowOffset
       second:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ShadowTex
+      second:
+        m_Texture: {fileID: 2800000, guid: 19ca8651c10974e6aa4cfa5d4b20d692, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
@@ -105,7 +117,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - first:
+        name: _TranslucencyMap
+      second:
+        m_Texture: {fileID: 2800000, guid: 6b217c1b3daab4c0d96f4f0522498f16, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - first:
+        name: PixelSnap
+      second: 0
     - first:
         name: _Brightness
       second: 1
@@ -117,7 +138,7 @@ Material:
       second: 2
     - first:
         name: _Cutoff
-      second: 0
+      second: 0.462
     - first:
         name: _DetailNormalMapScale
       second: 1
@@ -156,12 +177,15 @@ Material:
       second: 0.02
     - first:
         name: _Shininess
-      second: 0.078125
+      second: 0.025
     - first:
         name: _SmoothnessTextureChannel
       second: 1
     - first:
         name: _SpecularHighlights
+      second: 1
+    - first:
+        name: _SquashAmount
       second: 1
     - first:
         name: _SrcBlend
@@ -200,3 +224,9 @@ Material:
     - first:
         name: _SpecColor
       second: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - first:
+        name: _TreeInstanceColor
+      second: {r: 1, g: 1, b: 1, a: 1}
+    - first:
+        name: _TreeInstanceScale
+      second: {r: 1, g: 1, b: 1, a: 1}
