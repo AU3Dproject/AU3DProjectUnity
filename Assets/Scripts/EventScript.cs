@@ -40,7 +40,9 @@ public class EventScript : MonoBehaviour {
 		if (isAccess () && !eventScript.isExecute && PlayerControllerScript.activeFlag && isEventEnd) {
 
 			//接近時Object表示
-			nearObject.enabled = true;
+			if (nearObject != null) {
+				nearObject.enabled = true;
+			}
 			//Event開始ボタン押下
 			if(Input.GetButtonDown("Submit")){
 				//イベントの開始とPlayer動作停止
@@ -51,7 +53,9 @@ public class EventScript : MonoBehaviour {
 
 		} else {
 			//接近時Objectを消す
-			nearObject.enabled = false;
+			if (nearObject != null) {
+				nearObject.enabled = false;
+			}
 		}
 
 		//イベント終了時にPlayerの動作を開始する

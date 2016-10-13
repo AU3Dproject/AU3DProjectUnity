@@ -13,6 +13,17 @@ public class TalkEventScript : MonoBehaviour {
 	[Tooltip("このイベントに関するただの説明")]
 	public string description;
 
+	//Playerの接近時表示Object
+	public MeshRenderer nearObject;
+	//Playerの接近範囲
+	public float nearDistance = 1.0f;
+	//向き合わせを行うかどうか
+	public bool isFace2face = true;
+	//PlayerObject
+	private GameObject player = null;
+
+	private bool isEventEnd = true;
+
 	//テキストウィンドウを操作するためのGameObject
 	private GameObject textWindow = null;
 	//入力待ち判定
@@ -52,7 +63,10 @@ public class TalkEventScript : MonoBehaviour {
 	 * 　（２）話す時に表示するTextWindowとなるPrefabをResourcesフォルダからロード
 	 */
 	void Start() {
-		//canvas = Instantiate((GameObject)Resources.Load("TalkEvent/TalkEventCanvas"), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+		if (nearObject != null) {
+			nearObject.enabled = false;
+		}
+		player = (GameObject.Find("/PlayerController").GetComponent<PlayerControllerScript>()).Player;
 		textWindow = GameObject.Find("/Canvases").transform.Find("TalkEventCanvas").gameObject;
 		writer = textWindow.transform.GetChild(0).GetComponent<Writer>();
 		selectButtonManager = textWindow.transform.GetChild(1).GetComponent<TalkEventSelectButton>();
@@ -76,10 +90,42 @@ public class TalkEventScript : MonoBehaviour {
 		//実行タイプがAttach以外なら常に実行可能状態にする
 		if (executeType != ExecuteType.attach) {
 			isExecute = true;
+		} else {
+
+			//Player接近時
+			if (isAccess() && !isExecute && PlayerControllerScript.activeFlag && isEventEnd) {
+
+				//接近時Object表示
+				if (nearObject != null) {
+					nearObject.enabled = true;
+				}
+				//Event開始ボタン押下
+				if (Input.GetButtonDown("Submit")) {
+					//イベントの開始とPlayer動作停止
+					isExecute = true;
+					PlayerControllerScript.activeFlag = false;
+					isEventEnd = false;
+				}
+
+			} else {
+				//接近時Objectを消す
+				if (nearObject != null) {
+					nearObject.enabled = false;
+				}
+			}
+		}
+
+		//イベント終了時にPlayerの動作を開始する
+		if (!isExecute && PlayerControllerScript.activeFlag == false && !isEventEnd) {
+			PlayerControllerScript.activeFlag = true;
+			isEventEnd = true;
 		}
 
 		//実行可能状態にあれば常に実行する
 		if (isExecute) {
+			if (isFace2face) {
+				face2face();
+			}
 			Execute();
 		}
 
@@ -182,6 +228,32 @@ public class TalkEventScript : MonoBehaviour {
 		if (scriptLabel.TryGetValue(label, out num)) {
 			lineNum = num;
 		}
+	}
+
+	/* 接近時判定
+	 * 　（１）PlayerとNPCの距離がnearDistance以下ならtrueを返す
+	 * 　（２）そうじゃないならfalse
+	 */
+	private bool isAccess() {
+		if (player == null)
+			return false;
+		float distance = Vector3.Distance(this.transform.position, player.transform.position);
+		if (distance < nearDistance)
+			return true;
+		else
+			return false;
+	}
+
+
+	/* 向かい合わせ
+	 * 　（１）Playerの向きをNPCに向ける
+	 * 　（２）NPCも同様
+	 */
+	private void face2face() {
+		Vector3 to = new Vector3(player.transform.position.x - this.transform.position.x, 0, player.transform.position.z - this.transform.position.z);
+		this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(to), 0.1f);
+		to = new Vector3(this.transform.position.x - player.transform.position.x, 0, this.transform.position.z - player.transform.position.z);
+		player.transform.rotation = Quaternion.Slerp(player.transform.rotation, Quaternion.LookRotation(to), 0.1f);
 	}
 
 	public class Function{
