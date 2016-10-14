@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.IO;
+using UnityEngine.UI;
 
 public class TalkEventScript : MonoBehaviour {
 
@@ -149,8 +150,8 @@ public class TalkEventScript : MonoBehaviour {
 			}
 		}
 
-		//スクリプト読み込み・実行
-		while (!isWait && !isSelect && lineNum < scriptLines.Count) {
+			//スクリプト読み込み・実行
+			while (!isWait && !isSelect && lineNum < scriptLines.Count) {
 			string line = scriptLines[lineNum];
 			if (!functionExecute(line) && line != "") {
 				if (!textWindow.activeInHierarchy) {
@@ -161,7 +162,6 @@ public class TalkEventScript : MonoBehaviour {
 			}
 			lineNum++;
 		}
-
 		if (isSelect && !writer.isTextActive) {
 			string answer = selectButtonManager.getAnswer();
 			if (answer != "") {
@@ -243,8 +243,7 @@ public class TalkEventScript : MonoBehaviour {
 		else
 			return false;
 	}
-
-
+	
 	/* 向かい合わせ
 	 * 　（１）Playerの向きをNPCに向ける
 	 * 　（２）NPCも同様
@@ -278,6 +277,8 @@ public class TalkEventScript : MonoBehaviour {
 			}
 		}
 	}
+
+
 
 	public class AddSelectFunction : Function {
 		private string[] arguments = new string[2];

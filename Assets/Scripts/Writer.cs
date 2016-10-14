@@ -42,8 +42,10 @@ public class Writer : MonoBehaviour {
 	private string textBuff = "";
 	//スキップ状態を表す変数
 	private bool isSkip = false;
-
+	//現在の行
 	private int nowLine = 0;
+
+	public WaitArrowScript waitArrow = null;
 
 
     /* Start
@@ -68,8 +70,12 @@ public class Writer : MonoBehaviour {
 		//表示開始であれば処理開始
 		if (isTextActive && text != "") {
 
+			if (waitArrow.isVisible) {
+				waitArrow.setVisible(false);
+			}
+			
 			//時間の計測を行う
-            time += Time.deltaTime;
+			time += Time.deltaTime;
 
 			//文字表示時間に達した時、テキストの順次表示処理
             if (time > textVisibleTime) {
@@ -140,8 +146,10 @@ public class Writer : MonoBehaviour {
             i = 0;
             time = 0.0f;
 			isSkip = false;
-			
-        }
+			if (!waitArrow.isVisible) {
+				waitArrow.setVisible(true);
+			}
+		}
 
     } 
 
