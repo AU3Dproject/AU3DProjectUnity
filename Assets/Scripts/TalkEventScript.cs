@@ -11,6 +11,8 @@ public class TalkEventScript : MonoBehaviour {
 	[SerializeField]
 	[Tooltip("実行のタイプ\nattach:対象オブジェクトに話しかけた際に実行\nauto:条件下で一度だけ自動実行\nparallel:条件下で永遠に自動実行")]
 	public ExecuteType executeType = ExecuteType.attach;
+	[Tooltip("全ての条件が正しいとき実行、そうじゃなければ次のEventScriptが実行")]
+	public Condition[] condition;
 	[Tooltip("このイベントに関するただの説明")]
 	public string description;
 
@@ -89,7 +91,7 @@ public class TalkEventScript : MonoBehaviour {
 	void Update() {
 
 		//実行タイプがAttach以外なら常に実行可能状態にする
-		if (executeType != ExecuteType.attach) {
+		if (executeType != ExecuteType.attach && isCondition()) {
 			isExecute = true;
 		} else {
 
@@ -103,7 +105,7 @@ public class TalkEventScript : MonoBehaviour {
 				//Event開始ボタン押下
 				if (Input.GetButtonDown("Submit")) {
 					//イベントの開始とPlayer動作停止
-					isExecute = true;
+					if(isCondition())isExecute = true;
 					PlayerControllerScript.activeFlag = false;
 					isEventEnd = false;
 				}
@@ -123,7 +125,7 @@ public class TalkEventScript : MonoBehaviour {
 		}
 
 		//実行可能状態にあれば常に実行する
-		if (isExecute) {
+		if (isExecute && isCondition()) {
 			if (isFace2face) {
 				face2face();
 			}
@@ -253,6 +255,19 @@ public class TalkEventScript : MonoBehaviour {
 		this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(to), 0.1f);
 		to = new Vector3(this.transform.position.x - player.transform.position.x, 0, this.transform.position.z - player.transform.position.z);
 		player.transform.rotation = Quaternion.Slerp(player.transform.rotation, Quaternion.LookRotation(to), 0.1f);
+	}
+
+	public bool isCondition() {
+		if (condition.Length <= 0) {
+			return true;
+		} else {
+			foreach (Condition c in condition) {
+				if (c.isCondition() == false) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
 	public class Function{
@@ -389,6 +404,121 @@ public class TalkEventScript : MonoBehaviour {
 					break;
 			}
 		}
+	}
+
+	[System.Serializable]
+	public class Condition {
+
+		[SerializeField]
+		public VariableType variableType;
+		public string value1;
+		public ConditionType conditionType;
+		public string value2;
+		private TalkEventValiable valiableObject;
+
+		public enum ConditionType {
+			equal,
+			not_equal,
+			less_than,
+			more_than,
+			and_less,
+			and_more,
+		}
+		public enum VariableType {
+			Int,Float,Bool,String,
+		}
+
+		public bool isCondition() {
+			valiableObject = GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>();
+			switch (variableType) {
+				case VariableType.Int:
+					int i1 = a2v(value1) == null ? int.Parse(value1) : a2v(value1).getInt();
+					int i2 = a2v(value2) == null ? int.Parse(value2) : a2v(value2).getInt();
+					switch (conditionType) {
+						case ConditionType.equal:
+							return i1 == i2;
+						case ConditionType.not_equal:
+							return i1 != i2;
+						case ConditionType.less_than:
+							return i1 < i2;
+						case ConditionType.more_than:
+							return i1 > i2;
+						case ConditionType.and_less:
+							return i1 <= i2;
+						case ConditionType.and_more:
+							return i1 >= i2;
+					}
+					return false;
+				case VariableType.Float:
+					float f1 = a2v(value1) == null ? float.Parse(value1) : a2v(value1).getFloat();
+					float f2 = a2v(value2) == null ? float.Parse(value2) : a2v(value2).getFloat();
+					switch (conditionType) {
+						case ConditionType.equal:
+							return f1 == f2;
+						case ConditionType.not_equal:
+							return f1 != f2;
+						case ConditionType.less_than:
+							return f1 < f2;
+						case ConditionType.more_than:
+							return f1 > f2;
+						case ConditionType.and_less:
+							return f1 <= f2;
+						case ConditionType.and_more:
+							return f1 >= f2;
+					}
+					return false;
+				case VariableType.Bool:
+					bool b1 = a2v(value1) == null ? bool.Parse(value1) : a2v(value1).getBool();
+					bool b2 = a2v(value2) == null ? bool.Parse(value2) : a2v(value2).getBool();
+					switch (conditionType) {
+						case ConditionType.equal:
+							return b1 == b2;
+						case ConditionType.not_equal:
+							return b1 != b2;
+						case ConditionType.less_than:
+							return (b1 && !b2);
+						case ConditionType.more_than:
+							return (!b1 && b2);
+						case ConditionType.and_less:
+							return ((b1 == b2) || (b1 && !b2));
+						case ConditionType.and_more:
+							return ((b1 == b2) || (!b1 && b2));
+					}
+					return false;
+				case VariableType.String:
+					string s1 = a2v(value1) == null ? value1 : a2v(value1).getString();
+					string s2 = a2v(value2) == null ? value2 : a2v(value2).getString();
+					switch (conditionType) {
+						case ConditionType.equal:
+							return s1.CompareTo(s2) == 0;
+						case ConditionType.not_equal:
+							return s1.CompareTo(s2) != 0;
+						case ConditionType.less_than:
+							return s1.CompareTo(s2) < 0;
+						case ConditionType.more_than:
+							return s1.CompareTo(s2) > 0;
+						case ConditionType.and_less:
+							return s1.CompareTo(s2) <= 0;
+						case ConditionType.and_more:
+							return s1.CompareTo(s2) >= 0;
+					}
+					return false;
+			}
+			return false;
+		}
+		//argument to variable ：　引数が変数指定されていたら変数を返却。変数指定は<var=変数名>。もしくは<var=@ID>でのID指定が可能。
+		protected TalkEventValiable.Variable a2v(string arg) {
+			Debug.Log(arg);
+			if (GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().isVariable(arg)) {
+				Debug.Log("Variable");
+				return GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().getVariable_Command(arg);
+			} else {
+				Debug.Log("null");
+				return null;
+			}
+		}
+
+
 	}
 
 }

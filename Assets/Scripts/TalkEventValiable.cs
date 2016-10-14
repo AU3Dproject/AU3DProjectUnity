@@ -140,13 +140,12 @@ public class TalkEventValiable : MonoBehaviour,ISerializationCallbackReceiver{
 			if(value != null) this.value = value;
 		}
 
-		public int? getInt() {
+		public int getInt() {
 			int o;
 			if (int.TryParse(value, out o)) {
 				return o;
 			} else {
-				Debug.Log("変数値[" + value + "]はInt型じゃ（ないです）");
-				return null;
+				throw new System.ArgumentException("変数:[" + value + "]はInt型じゃ（ないです）");
 			}
 		}
 		public float getFloat() {

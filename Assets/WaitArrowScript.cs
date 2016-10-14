@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class WaitArrowScript : MonoBehaviour {
 
 	[SerializeField]
+	//フェードアウトするスピード
 	public float fadeSpeed = 2.0f;
 	private int fadein = 1;
 	public bool isVisible = true;
