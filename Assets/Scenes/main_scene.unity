@@ -37974,7 +37974,7 @@ MonoBehaviour:
   DashSpeed: 12
   AdjustSpeed: 0
   Gravity: 30
-  JumpPower: 30
+  JumpPower: 10
   tolerance: 0.15
   initPosition: {x: -413, y: 0, z: 330}
   AlwaysDashMode: 0
