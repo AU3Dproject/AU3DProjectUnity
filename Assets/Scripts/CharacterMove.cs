@@ -27,6 +27,7 @@ public class CharacterMove : MonoBehaviour {
     public AudioClip WalkSE;
     //ジャンプ音
     public AudioClip JumpSE;
+	
 
     //フラーム移動ベクトル
     private Vector3 move_vector ;
@@ -36,13 +37,16 @@ public class CharacterMove : MonoBehaviour {
 	private Animator animator = null;
     //ジャンプのフラグ
     private bool isJump = false;
-	
+	//ナビメッシュ
+	private NavigationAgent agent;
+
 	/* Start
 	 * 　（１）変数・コンポーネント初期化
 	 */
 	public void Start () {
 		characterController = this.GetComponent<CharacterController> ();
 		if(useAnimator)this.animator = this.GetComponent<Animator>();
+		agent = GameObject.Find("NavigationAgent").GetComponent<NavigationAgent>();
 		move_vector = new Vector3(0.0f,0.0f,0.0f);
 	}
 	
@@ -85,6 +89,7 @@ public class CharacterMove : MonoBehaviour {
 	 * 　（３）ジャンプする際、着地の際にAnimatorを変化させる。
 	 */
 	private void moveJump(){
+		
 		if (CheckGrounded()) {
 			if(this.animator.GetBool ("isJump")==true && move_vector.y == 0.0f){
 				settingAnimator(null,null,null,false);
@@ -97,6 +102,7 @@ public class CharacterMove : MonoBehaviour {
             }
 			if(!Input.GetButton("Jump") && !animator.GetBool("isJump")) {
 				isJump = false;
+				agent.warpAgent(transform.position);
 			}
 		}
 	}
@@ -222,25 +228,26 @@ public class CharacterMove : MonoBehaviour {
 	//http://www.section31.x0.com/gamedevelopment/unity/unity-charactercontrolle-isgrounded%E3%81%AE%E7%B2%BE%E5%BA%A6%E5%90%91%E4%B8%8A%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6/
 	bool CheckGrounded(){
 		//CharacterControlle.IsGroundedでまずは判定
-	/*	if (this.characterController.isGrounded){
-			return true; 
-		}
-		
-		//MASK　自機以外判定
-		int layerMask = (1 << LayerMask.NameToLayer("Player")) + (1 << LayerMask.NameToLayer("Water"));
-		layerMask = ~layerMask;
-		
-		//Raycastして距離を測定(5メートル以内で判定
-		RaycastHit hit;
-		if (Physics.Raycast(this.characterController.transform.position + Vector3.up * 0.1f, Vector3.down, out hit, 5f , layerMask)){
-			if (hit.distance > tolerance){	//tolerance以内の距離なら接地
-				return false;
+		/*	if (this.characterController.isGrounded){
+				return true; 
+			}
+
+			//MASK　自機以外判定
+			int layerMask = (1 << LayerMask.NameToLayer("Player")) + (1 << LayerMask.NameToLayer("Water"));
+			layerMask = ~layerMask;
+
+			//Raycastして距離を測定(5メートル以内で判定
+			RaycastHit hit;
+			if (Physics.Raycast(this.characterController.transform.position + Vector3.up * 0.1f, Vector3.down, out hit, 5f , layerMask)){
+				if (hit.distance > tolerance){	//tolerance以内の距離なら接地
+					return false;
+				}else{
+					return true;
+				}
 			}else{
 				return true;
-			}
-		}else{
-			return true;
-		}*/
+			}*/
+		
 		return characterController.isGrounded;
 	}
 
