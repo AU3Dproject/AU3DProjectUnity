@@ -8,6 +8,9 @@ public class MapImageScript : MonoBehaviour {
 	public float maxZoomValue = 260;
 	public float zoomSpeed = 1.0f;
 
+	public float moveSpeed = 5.0f;
+
+
 	
 	public Camera upMapCamera;
 
@@ -30,5 +33,12 @@ public class MapImageScript : MonoBehaviour {
 				upMapCamera.orthographicSize = minZoomValue;
 			}
 		}
+
+		float mvx = 0.0f;
+		float mvz = 0.0f;
+
+		mvx = Input.GetAxis("CameraHorizontal") * moveSpeed;
+		mvz = Input.GetAxis("CameraVertical") * moveSpeed;
+		upMapCamera.gameObject.transform.position += new Vector3(mvx, 0, mvz);
 	}
 }

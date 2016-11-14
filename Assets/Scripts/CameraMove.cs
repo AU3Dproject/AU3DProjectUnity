@@ -51,7 +51,9 @@ public class CameraMove : MonoBehaviour {
 	 * 　（２）カメラ動作処理
 	 */
 	public void FixedUpdate () {
-		UpdateCamera ();
+		if (PlayerControllerScript.activeFlag) {
+			UpdateCamera();
+		}
 	}
 
 
