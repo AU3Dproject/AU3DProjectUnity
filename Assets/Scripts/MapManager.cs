@@ -17,6 +17,8 @@ public class MapManager : MonoBehaviour {
 	public Material selectMaterial;
 	public Material nonSelectMaterial;
 
+	public SphereCollider space;
+
 	// Use this for initialization
 	void Start() {
 		detailContent.sizeDelta = new Vector2(0, transform.childCount * 200);
@@ -33,13 +35,14 @@ public class MapManager : MonoBehaviour {
 			t.GetChild(1).GetComponent<Text>().text = detail.NavigationName;
 			t.GetChild(2).GetChild(0).GetComponent<Text>().text = detail.NavigationDescription;
 
-			t.GetComponent<Button>().onClick.AddListener(()=>setDestination(detail.gameObject));
+			t.GetComponent<Button>().onClick.AddListener(() => setDestination(detail.gameObject));
 		}
 
+		space = transform.GetChild(1).GetComponent<SphereCollider>();
 	}
 
 	public void setDestination(GameObject destination) {
-		foreach(NavigationDetail d in details){
+		foreach (NavigationDetail d in details) {
 			d.transform.GetChild(0).GetComponent<MeshRenderer>().material = nonSelectMaterial;
 		}
 		NavigationAgent.GetComponent<NavigationAgent>().toTarget = destination;
