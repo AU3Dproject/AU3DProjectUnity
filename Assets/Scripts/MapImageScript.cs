@@ -10,6 +10,9 @@ public class MapImageScript : MonoBehaviour {
 
 	public float moveSpeed = 5.0f;
 
+    public bool isFlipHorizontal = true;
+    public bool isFlipVertical = true;
+
 
 	
 	public Camera upMapCamera;
@@ -37,8 +40,8 @@ public class MapImageScript : MonoBehaviour {
 		float mvx = 0.0f;
 		float mvz = 0.0f;
 
-		mvx = Input.GetAxis("CameraHorizontal") * moveSpeed;
-		mvz = Input.GetAxis("CameraVertical") * moveSpeed;
+		mvx = Input.GetAxis("CameraHorizontal") * moveSpeed * (isFlipHorizontal?-1:1);
+		mvz = Input.GetAxis("CameraVertical") * moveSpeed * (isFlipVertical ? -1 : 1);
 		upMapCamera.gameObject.transform.position += new Vector3(mvx, 0, mvz);
 	}
 }
