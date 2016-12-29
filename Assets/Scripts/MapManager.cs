@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
+using UnityEngine.EventSystems;
 
 public class MapManager : MonoBehaviour {
 
@@ -17,8 +18,6 @@ public class MapManager : MonoBehaviour {
 	public Material selectMaterial;
 	public Material nonSelectMaterial;
 
-	public SphereCollider space;
-
 	// Use this for initialization
 	void Start() {
 		detailContent.sizeDelta = new Vector2(0, transform.childCount * 200);
@@ -26,6 +25,8 @@ public class MapManager : MonoBehaviour {
 			NavigationDetail detail = transform.GetChild(i).GetComponent<NavigationDetail>();
 			details.Add(detail);
 			GameObject clone = (GameObject)Instantiate(detailPrefab, detailContent);
+			clone.name = i.ToString();
+
 			RectTransform t = clone.GetComponent<RectTransform>();
 			t.localPosition = new Vector3(0, i * -200, 0);
 			t.sizeDelta = new Vector2(900, 200);
@@ -36,9 +37,32 @@ public class MapManager : MonoBehaviour {
 			t.GetChild(2).GetChild(0).GetComponent<Text>().text = detail.NavigationDescription;
 
 			t.GetComponent<Button>().onClick.AddListener(() => setDestination(detail.gameObject));
+
 		}
 
-		space = transform.GetChild(1).GetComponent<SphereCollider>();
+		for (int i = 0; i < detailContent.childCount; i++) {
+			Button button = detailContent.GetChild(i).GetComponent<Button>();
+			Navigation button_nav = button.navigation;
+			button_nav.mode = Navigation.Mode.Explicit;
+			
+			if (i == 0) {
+				button_nav.selectOnUp = detailContent.GetChild(detailContent.childCount - 1).GetComponent<Button>();
+			} else {
+				button_nav.selectOnUp = detailContent.GetChild(i - 1).GetComponent<Button>();
+			}
+			if (i == detailContent.childCount - 1) {
+				button_nav.selectOnDown = detailContent.GetChild(0).GetComponent<Button>();
+			} else {
+				button_nav.selectOnDown = detailContent.GetChild(i + 1).GetComponent<Button>();
+			}
+			button.navigation = button_nav;
+		}
+
+		var eventSystem = FindObjectOfType<EventSystem>();
+
+		detailContent.parent.parent.parent.GetComponent<Button>().onClick.AddListener(()=>eventSystem.SetSelectedGameObject(detailContent.GetChild(0).gameObject));
+
+		//space = transform.GetChild(1).GetComponent<SphereCollider>();
 	}
 
 	public void setDestination(GameObject destination) {
@@ -47,6 +71,7 @@ public class MapManager : MonoBehaviour {
 		}
 		NavigationAgent.GetComponent<NavigationAgent>().toTarget = destination;
 		destination.transform.GetChild(0).GetComponent<MeshRenderer>().material = selectMaterial;
+		destination.transform.GetChild(1).GetComponent<MeshRenderer>().enabled = true;
 	}
 
 

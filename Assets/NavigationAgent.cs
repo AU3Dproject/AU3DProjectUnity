@@ -24,6 +24,7 @@ public class NavigationAgent : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (fromTarget != null && toTarget != null && agent != null && line != null && agent.pathStatus != NavMeshPathStatus.PathInvalid) {
+			line.enabled = true;
 			transform.position = new Vector3(fromTarget.transform.position.x, transform.position.y, fromTarget.transform.position.z);
 			agent.Warp(transform.position);
 			transform.rotation = fromTarget.transform.rotation;
@@ -51,6 +52,10 @@ public class NavigationAgent : MonoBehaviour {
 			//	}
 			//}
 
+		}
+
+		if (toTarget == null) {
+			line.enabled = false;
 		}
 	}
 

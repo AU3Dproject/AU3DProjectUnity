@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 public class MainMenuScript : MonoBehaviour {
 
     [SerializeField]
-    public Canvas menuCanvas;
+    public Menu mainMenu;
 	public EventSystem eventSystem;
 	public GameObject first;
 	public AudioClip seClip;
@@ -13,7 +13,12 @@ public class MainMenuScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		menuCanvas.gameObject.SetActive(false);
+        foreach (Transform child in mainMenu.transform.parent ) {
+            if (child.gameObject.activeInHierarchy == true) {
+                child.gameObject.SetActive(false);
+            }
+        }
+		mainMenu.gameObject.SetActive(false);
 		se = GameObject.Find("Manager").GetComponent<Manager>().SEManager.GetComponent<AudioSource>();
 	}
 
@@ -22,15 +27,19 @@ public class MainMenuScript : MonoBehaviour {
         if (Input.GetButtonDown("Menu")) {
             
 			//閉じるとき
-            if (menuCanvas.gameObject.activeInHierarchy) {
+            if (mainMenu.gameObject.activeInHierarchy) {
 				se.PlayOneShot(seClip);
 				EventSystem.current.SetSelectedGameObject(null);
-                menuCanvas.gameObject.SetActive(false);
+				foreach (Menu menu in mainMenu.transform.parent.GetComponentsInChildren<Menu>()) {
+					menu.Close();
+				}
+                mainMenu.gameObject.SetActive(false);
                 PlayerControllerScript.activeFlag = true;
+				EventSystem.current.SetSelectedGameObject(null);
 			//開くとき
 			} else if(PlayerControllerScript.activeFlag) {
 				se.PlayOneShot(seClip);
-				menuCanvas.gameObject.SetActive(true);
+				mainMenu.gameObject.SetActive(true);
                 if(first.activeInHierarchy) EventSystem.current.SetSelectedGameObject(first);
                 PlayerControllerScript.activeFlag = false;
             }
