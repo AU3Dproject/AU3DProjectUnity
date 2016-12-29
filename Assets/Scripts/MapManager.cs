@@ -60,7 +60,7 @@ public class MapManager : MonoBehaviour {
 
 		var eventSystem = FindObjectOfType<EventSystem>();
 
-		detailContent.parent.parent.parent.GetComponent<Button>().onClick.AddListener(()=>eventSystem.SetSelectedGameObject(detailContent.GetChild(0).gameObject));
+		//detailContent.parent.parent.parent.GetComponent<Button>().onClick.AddListener(()=>eventSystem.SetSelectedGameObject(detailContent.GetChild(0).gameObject));
 
 		//space = transform.GetChild(1).GetComponent<SphereCollider>();
 	}
