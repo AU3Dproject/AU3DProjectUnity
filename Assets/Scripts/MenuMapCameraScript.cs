@@ -24,23 +24,28 @@ public class MenuMapCameraScript : MonoBehaviour {
 	void OnTriggerEnter(Collider other) {
 		if (other.gameObject.layer == 11) {
 			other.gameObject.GetComponent<Renderer>().material.color = Color.blue;
-			int index = -1;
-			for (int i = 0; i < mapManager.childCount; i++) {
-				if (mapManager.GetChild(i) == other.transform.parent) {
-					index = i;
-					break;
-				}
-			}
-			if (index != -1) {
-				GameObject nav_content = GameObject.Find("ScrollPanel").transform.GetChild(0).GetChild(0).GetChild(0).GetChild(index).gameObject;
-				GameObject.Find("EventSystem").GetComponent<EventSystem>().SetSelectedGameObject(nav_content);
-			}
+			buttonSelect(other, Color.yellow);
 		}
 	}
 
 	void OnTriggerExit(Collider other) {
 		if (other.gameObject.layer == 11) {
 			other.gameObject.GetComponent<Renderer>().material.color = Color.red;
+			buttonSelect(other,Color.white);
+		}
+	}
+
+	void buttonSelect(Collider other ,Color color) {
+		int index = -1;
+		for (int i = 0; i < mapManager.childCount; i++) {
+			if (mapManager.GetChild(i) == other.transform.parent) {
+				index = i;
+				break;
+			}
+		}
+		if (index != -1) {
+			GameObject nav_content = GameObject.Find("ScrollPanel").transform.GetChild(0).GetChild(0).GetChild(0).GetChild(index).gameObject;
+			nav_content.GetComponent<Image>().color = color;
 		}
 	}
 }

@@ -7,12 +7,12 @@ public class Menu : MonoBehaviour {
 
 	//戻る際のメニュー
     public Menu beforeMenu;
-	//UI操作用のEventSystem
-    public EventSystem eventSystem;
 	//このメニューの最初に選択されるもの
     public GameObject firstSelect;
 	//戻る際のショートカットキー
     public string backShortcutKey = "Cancel";
+
+	public bool backBlock = false;
 
 	//このメニューがアクティブかどうか（Activeなメニューは一つだけ）
     private bool isActive = false;
@@ -80,6 +80,10 @@ public class Menu : MonoBehaviour {
 
 	public void ApplicationQuit() {
 		Application.Quit();
+	}
+
+	public void setBackBlock(bool block) {
+		backBlock = block;
 	}
 
 
