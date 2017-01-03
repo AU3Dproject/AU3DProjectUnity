@@ -21,12 +21,13 @@ public class ScrollContentsSelectScript : MonoBehaviour {
 
 	public void SettingContentSelectListener() {
 		for (int i = 0; i < transform.childCount; i++) {
-			Button btn = transform.GetChild(i).GetComponent<Button>();
-			btn.onClick.AddListener(()=>onclickListener(btn));
+			Toggle btn = transform.GetChild(i).GetComponent<Toggle>();
+			btn.onValueChanged.AddListener(value => onclickListener(btn));
+			
 		}
 	}
 
-	void onclickListener(Button btn) {
+	void onclickListener(Toggle btn) {
 		otherColorInit();
 		btn.GetComponent<Image>().color = new Color(165.0f/255.0f,255.0f/255.0f,173.0f/255.0f);
 		beforeButton.Select();

@@ -11,9 +11,9 @@ public class MovePlaceDecideButtonScript : MonoBehaviour {
 	}
 
 	void SelectButton() {
-		Button[] contents = GameObject.Find("ScrollPanel").transform.GetChild(0).GetChild(0).GetChild(0).GetComponentsInChildren<Button>();
+		Toggle[] contents = GameObject.Find("ScrollPanel").transform.GetChild(0).GetChild(0).GetChild(0).GetComponentsInChildren<Toggle>();
 
-		foreach (Button btn in contents) {
+		foreach (Toggle btn in contents) {
 			if (btn.GetComponent<Image>().color == Color.yellow) {
 				btn.Select();
 			}

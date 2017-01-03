@@ -62,7 +62,7 @@ public class ButtonSelectionController : MonoBehaviour {
 	private void Init() {
 		if (transform.GetChild(0).GetChild(0).childCount == mapManager.transform.childCount) {
 			m_scrollRect = GetComponent<ScrollRect>();
-			Button[] btns = GetComponentsInChildren<Button>();
+			Toggle[] btns = GetComponentsInChildren<Toggle>();
 			m_buttons = new MyButton[btns.Length];
 			for (int i=0;i<m_buttons.Length;i++) {
 				RectTransform btnRect = btns[i].GetComponent<RectTransform>();

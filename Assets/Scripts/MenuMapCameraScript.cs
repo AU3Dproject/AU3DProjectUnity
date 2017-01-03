@@ -4,35 +4,44 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class MenuMapCameraScript : MonoBehaviour {
-
-	BoxCollider collider = null;
+	
 	Transform mapManager;
 	Transform movePanel;
 
+	Collider selectedCollider = null;
+
 	// Use this for initialization
 	void Start() {
-		collider = GetComponent<BoxCollider>();
 		mapManager = GameObject.Find("MapManager").transform;
 		movePanel = GameObject.Find("movePanel").transform;
 	}
 
 	// Update is called once per frame
 	void Update() {
+		if (selectedCollider != null) {
+			mapPlaneSelect(selectedCollider, Color.blue);
+			buttonSelect(selectedCollider, Color.yellow);
+		} else {
 
+		}
 	}
 
 	void OnTriggerEnter(Collider other) {
 		if (other.gameObject.layer == 11) {
-			other.gameObject.GetComponent<Renderer>().material.color = Color.blue;
-			buttonSelect(other, Color.yellow);
+			selectedCollider = other;
 		}
 	}
 
 	void OnTriggerExit(Collider other) {
 		if (other.gameObject.layer == 11) {
-			other.gameObject.GetComponent<Renderer>().material.color = Color.red;
+			mapPlaneSelect(other, Color.red);
 			buttonSelect(other,Color.white);
+			selectedCollider = null;
 		}
+	}
+
+	void mapPlaneSelect(Collider other, Color color) {
+		other.gameObject.GetComponent<Renderer>().material.color = color;
 	}
 
 	void buttonSelect(Collider other ,Color color) {
