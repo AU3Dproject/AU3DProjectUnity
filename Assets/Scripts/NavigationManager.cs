@@ -17,7 +17,7 @@ public class NavigationManager : MonoBehaviour {
 	
 	}
 
-	[System.Serializable]
+	[Serializable]
 	public class NavigationPlace {
 		public GameObject navigationObject;
 		public string navigationName;

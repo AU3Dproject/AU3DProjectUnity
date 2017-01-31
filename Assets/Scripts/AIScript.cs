@@ -16,7 +16,7 @@ public class AIScript : MonoBehaviour {
 	//次の移動タイミング
 	private float nextTime = 5.0f;
 	//AIで最重要なNavMeshAgent
-	private NavMeshAgent agent = null;
+	private UnityEngine.AI.NavMeshAgent agent = null;
 	//AnimatorComponent
 	private Animator animator = null;
 
@@ -25,7 +25,7 @@ public class AIScript : MonoBehaviour {
 	 * 　（１）初期化
 	 */
 	void Start () {
-		agent = GetComponent<NavMeshAgent>();
+		agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
 		animator = GetComponent<Animator>();
 		destination = new Vector3 (0.0f, 0.0f, 0.0f);
 		agent.angularSpeed = 300;
@@ -41,7 +41,7 @@ public class AIScript : MonoBehaviour {
 		//時間が移動タイミングに達したら
 		if (nextTime <= time) {
 			//Playerが動作している時に
-			if(PlayerControllerScript.activeFlag!=false){
+			if(PlayerManager.Instance.is_pause!=false){
 				//目的地ランダム決定　時間初期化　次時間ランダム決定
 				setDestinationRandom();
 				agent.SetDestination(destination);
@@ -51,8 +51,8 @@ public class AIScript : MonoBehaviour {
 		}
 		//要修正！！！
 		//Playerが非動作の時は現地点を目的地とする
-		if (PlayerControllerScript.activeFlag!=true) {
-			agent.SetDestination(this.transform.position);
+		if (PlayerManager.Instance.is_pause != true) {
+			agent.SetDestination(transform.position);
 		}
 
 		//行き先が無いなら立ち止まるアニメーション
@@ -71,7 +71,7 @@ public class AIScript : MonoBehaviour {
 	 * 　（１）次の目的地を移動範囲内で決定する。
 	 */
 	void setDestinationRandom(){
-		Vector3 pos = this.transform.position;
+		Vector3 pos = transform.position;
 		float new_x = pos.x + (0.5f - Random.value) * moveRange;
 		float new_y = 1.0f;
 		float new_z = pos.z + (0.5f - Random.value) * moveRange;

@@ -10,12 +10,12 @@ public class TimeTextScript : MonoBehaviour {
     private string coron;
     private string secondBuf = ":";
 
-	private virtualTimeScript virtualTime;
+	private TimeManager time_manager;
 
 	// Use this for initialization
 	void Start () {
         timeText = GetComponent<Text>();
-		virtualTime = GameObject.FindGameObjectWithTag("Time").GetComponent<virtualTimeScript>();
+		time_manager = TimeManager.Instance;
 	}
 
     // Update is called once per frame
@@ -33,7 +33,7 @@ public class TimeTextScript : MonoBehaviour {
 			t.Year,t.Month,t.Day,t.Hour, t.Minute, t.Second
 		);
         secondBuf = t.Second.ToString();*/
-		timeText.text = virtualTime.ToStringRich(timeText.color,true);
+		timeText.text = time_manager.ToStringRich(timeText.color,true);
     }
 
     string dowKanji(string dow) {

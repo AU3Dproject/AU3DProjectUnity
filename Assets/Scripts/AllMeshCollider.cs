@@ -1,32 +1,26 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class AllMeshCollider : MonoBehaviour {
 
-	int i = 0;
-
-	// Use this for initialization
-	void Start () {
+	[SerializeField,Header("aaa")]
+	public string a;
+	
+	void Awake () {
 		addCollider(transform);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
-	private void addCollider(Transform obj) {
-		foreach(Transform o in obj) {
-			if (o.tag == "NoCollider") continue;
+	private void addCollider(Transform parent) {
+		foreach(Transform child in parent) {
+			if (child.tag == "NoCollider") continue;
 
-			if (o.childCount > 0) addCollider(o);
+			if (child.childCount > 0) addCollider(child);
 
-			MeshFilter mesh = o.GetComponent<MeshFilter>();
+			MeshFilter mesh = child.GetComponent<MeshFilter>();
 			if (mesh == null) continue;
 
-			MeshCollider collider = o.GetComponent<MeshCollider>();
+			MeshCollider collider = child.GetComponent<MeshCollider>();
 			if (collider == null) {
-				collider = o.gameObject.AddComponent<MeshCollider>();
+				collider = child.gameObject.AddComponent<MeshCollider>();
 			}
 			collider.sharedMesh = mesh.mesh;
 		}

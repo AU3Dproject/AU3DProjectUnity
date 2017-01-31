@@ -10,39 +10,41 @@ public class TalkEventScript : MonoBehaviour {
 
 	[SerializeField]
 	[Tooltip("実行のタイプ\nattach:対象オブジェクトに話しかけた際に実行\nauto:条件下で一度だけ自動実行\nparallel:条件下で永遠に自動実行")]
-	public ExecuteType executeType = ExecuteType.attach;
+	public ExecuteType execute_type = ExecuteType.attach;
 	[Tooltip("全ての条件が正しいとき実行、そうじゃなければ次のEventScriptが実行")]
 	public Condition[] condition;
 	[Tooltip("このイベントに関するただの説明")]
 	public string description;
+	[Tooltip("PlayerのManager")]
+	public PlayerManager player_manager;
 
 	//Playerの接近時表示Object
-	public MeshRenderer nearObject;
+	public MeshRenderer near_object;
 	//Playerの接近範囲
-	public float nearDistance = 1.0f;
+	public float near_distance = 1.0f;
 	//向き合わせを行うかどうか
-	public bool isFace2face = true;
+	public bool is_face2face = true;
 	//PlayerObject
 	private GameObject player = null;
 
-	private bool isEventEnd = true;
+	private bool is_event_end = true;
 
 	//テキストウィンドウを操作するためのGameObject
-	private GameObject textWindow = null;
+	private GameObject text_window = null;
 	//入力待ち判定
-	private bool isWait = false;
+	private bool is_wait = false;
 	//選択待ち判定
-	private bool isSelect = false;
+	private bool is_select = false;
 	//実行可能状態
-	public bool isExecute = false;
+	public bool is_execute = false;
 	//スクリプトを行単位で格納しておくリスト
-	private List<string> scriptLines = new List<string>();
+	private List<string> script_lines = new List<string>();
 	//ラベルをラベル名と行数とで格納しておくリスト
-	private Dictionary<string, int> scriptLabel = new Dictionary<string, int>();
-	private int lineNum = 0;
+	private Dictionary<string, int> script_label = new Dictionary<string, int>();
+	private int line_num = 0;
 	private Writer writer = null;
-	private TalkEventSelectButton selectButtonManager = null;
-	private BGMManager audioSourceBGM = null;
+	private TalkEventSelectButton select_button_manager = null;
+	private BGMManager bgm_manager = null;
 	private Function[] functions;
 	//実行のタイプ
 	public enum ExecuteType {
@@ -66,22 +68,21 @@ public class TalkEventScript : MonoBehaviour {
 	 * 　（２）話す時に表示するTextWindowとなるPrefabをResourcesフォルダからロード
 	 */
 	void Start() {
-		if (nearObject != null) {
-			nearObject.enabled = false;
+		if (near_object != null) {
+			near_object.enabled = false;
 		}
-		player = (GameObject.Find("/PlayerController").GetComponent<PlayerControllerScript>()).Player;
-		textWindow = GameObject.Find("/Canvases").transform.Find("TalkEventCanvas").gameObject;
-		writer = textWindow.transform.GetChild(0).GetComponent<Writer>();
-		selectButtonManager = textWindow.transform.GetChild(1).GetComponent<TalkEventSelectButton>();
-		audioSourceBGM = GameObject.Find("/Manager").GetComponent<Manager>().BGMManager;
-		textWindow.SetActive(false);
+		player = PlayerManager.Instance.player_model;
+		text_window = GameObject.Find("/Canvases").transform.Find("TalkEventCanvas").gameObject;
+		writer = text_window.transform.GetChild(0).GetComponent<Writer>();
+		select_button_manager = text_window.transform.GetChild(1).GetComponent<TalkEventSelectButton>();
+		//bgm_manager = GameObject.Find("/Manager").GetComponent<Manager>().BGMManager;
+		text_window.SetActive(false);
 		loadEventScript();
 
-		Function[] tmp = {
+		functions = new Function[]{
 			new AddSelectFunction(this),new OpenSelectFunction(this),new PutWaitFunction(this),new LinesNewFunction(this),new GoToFunction(this),new BGMFunction(this)
 		};
 
-		functions = tmp;
 	}
 
 	/* Update
@@ -91,42 +92,44 @@ public class TalkEventScript : MonoBehaviour {
 	void Update() {
 
 		//実行タイプがAttach以外なら常に実行可能状態にする
-		if (executeType != ExecuteType.attach && isCondition()) {
-			isExecute = true;
+		if (execute_type != ExecuteType.attach && isCondition()) {
+			is_execute = true;
 		} else {
 
 			//Player接近時
-			if (isAccess() && !isExecute && PlayerControllerScript.activeFlag && isEventEnd) {
+			if (isAccess() && !is_execute && !PlayerManager.Instance.is_pause && is_event_end) {
 
 				//接近時Object表示
-				if (nearObject != null) {
-					nearObject.enabled = true;
+				if (near_object != null) {
+					near_object.enabled = true;
 				}
 				//Event開始ボタン押下
 				if (Input.GetButtonDown("Submit")) {
 					//イベントの開始とPlayer動作停止
-					if(isCondition())isExecute = true;
-					PlayerControllerScript.activeFlag = false;
-					isEventEnd = false;
+					if (isCondition()) {
+						is_execute = true;
+					}
+					PlayerManager.Instance.is_pause = false;
+					is_event_end = false;
 				}
 
 			} else {
 				//接近時Objectを消す
-				if (nearObject != null) {
-					nearObject.enabled = false;
+				if (near_object != null) {
+					near_object.enabled = false;
 				}
 			}
 		}
 
 		//イベント終了時にPlayerの動作を開始する
-		if (!isExecute && PlayerControllerScript.activeFlag == false && !isEventEnd) {
-			PlayerControllerScript.activeFlag = true;
-			isEventEnd = true;
+		if (!is_execute && !PlayerManager.Instance.is_pause && !is_event_end) {
+			PlayerManager.Instance.is_pause = true;
+			is_event_end = true;
 		}
 
 		//実行可能状態にあれば常に実行する
-		if (isExecute && isCondition()) {
-			if (isFace2face) {
+		if (is_execute && isCondition()) {
+			if (is_face2face) {
 				face2face();
 			}
 			Execute();
@@ -144,44 +147,44 @@ public class TalkEventScript : MonoBehaviour {
 	void Execute() {
 
 		//TalkEvent中の入力操作
-		if (Input.GetButtonDown("Submit") && !isSelect) {
+		if (Input.GetButtonDown("Submit") && !is_select) {
 			if (writer.isTextActive) {
 				writer.allVisible();
-			} else if (isWait) {
-				isWait = false;
+			} else if (is_wait) {
+				is_wait = false;
 			}
 		}
 
 			//スクリプト読み込み・実行
-			while (!isWait && !isSelect && lineNum < scriptLines.Count) {
-			string line = scriptLines[lineNum];
+			while (!is_wait && !is_select && line_num < script_lines.Count) {
+			string line = script_lines[line_num];
 			if (!functionExecute(line) && line != "") {
-				if (!textWindow.activeInHierarchy) {
-					textWindow.SetActive(true);
+				if (!text_window.activeInHierarchy) {
+					text_window.SetActive(true);
 				}
 				writer.text += (line + "\n");
 				writer.isTextActive = true;
 			}
-			lineNum++;
+			line_num++;
 		}
-		if (isSelect && !writer.isTextActive) {
-			string answer = selectButtonManager.getAnswer();
+		if (is_select && !writer.isTextActive) {
+			string answer = select_button_manager.getAnswer();
 			if (answer != "") {
 				goLabel(answer);
-				isSelect = false;
+				is_select = false;
 				writer.text = "";
-				selectButtonManager.closeButtons();
+				select_button_manager.closeButtons();
 			}
 		}
 
 		//スクリプト終了処理
-		if (!isWait && scriptLines.Count <= lineNum && !writer.isTextActive && !isSelect) {
+		if (!is_wait && script_lines.Count <= line_num && !writer.isTextActive && !is_select) {
 			writer.removeText();
 			writer.text = "";
-			textWindow.SetActive(false);
-			lineNum = 0;
-			isExecute = false;
-			isWait = false;
+			text_window.SetActive(false);
+			line_num = 0;
+			is_execute = false;
+			is_wait = false;
 		}
 	}
 
@@ -191,10 +194,10 @@ public class TalkEventScript : MonoBehaviour {
 		while (stringReader.Peek() > -1) {
 			string line = stringReader.ReadLine();
 			if (Regex.IsMatch(line, @"^[a-zA-z]+?\w*:$")) {
-				scriptLabel.Add(line.Substring(0, line.Length - 1), i);
+				script_label.Add(line.Substring(0, line.Length - 1), i);
 				line = "";
 			}
-			scriptLines.Add(line);
+			script_lines.Add(line);
 			i++;
 		}
 		stringReader.Close();
@@ -214,21 +217,21 @@ public class TalkEventScript : MonoBehaviour {
 	 * 　（１）外部から入力待ちを設定可能にする（使うかどうかはわからぬ）
 	 */
 	public void setWait(bool wait) {
-		isWait = wait;
+		is_wait = wait;
 	}
 
 	public void setSelectMode(bool select) {
-		isSelect = select;
+		is_select = select;
 	}
 
 	public void activeWindow(bool visible) {
-		textWindow.SetActive(visible);
+		text_window.SetActive(visible);
 	}
 
 	public void goLabel(string label) {
 		int num = 0;
-		if (scriptLabel.TryGetValue(label, out num)) {
-			lineNum = num;
+		if (script_label.TryGetValue(label, out num)) {
+			line_num = num;
 		}
 	}
 
@@ -240,7 +243,7 @@ public class TalkEventScript : MonoBehaviour {
 		if (player == null)
 			return false;
 		float distance = Vector3.Distance(this.transform.position, player.transform.position);
-		if (distance < nearDistance)
+		if (distance < near_distance)
 			return true;
 		else
 			return false;
@@ -285,8 +288,8 @@ public class TalkEventScript : MonoBehaviour {
 		}
 		//argument to variable ：　引数が変数指定されていたら変数を返却。変数指定は<var=変数名>。もしくは<var=@ID>でのID指定が可能。
 		protected string a2v(string arg) {
-			if (GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().isVariable(arg)) {
-				return GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().getVariable_Command(arg).value;
+			if (TalkEventValiableManager.Instance.isVariable(arg)) {
+				return TalkEventValiableManager.Instance.getVariable_Command(arg).value;
 			} else {
 				return arg;
 			}
@@ -311,7 +314,7 @@ public class TalkEventScript : MonoBehaviour {
 			return false;
 		}
 		public override void Execute(){
-			eventScript.selectButtonManager.addButton(arguments[0],arguments[1]);
+			eventScript.select_button_manager.addButton(arguments[0],arguments[1]);
 		}
 	}
 
@@ -322,7 +325,7 @@ public class TalkEventScript : MonoBehaviour {
 			eventScript = script;
 		}
 		public override void Execute() {
-			eventScript.selectButtonManager.openButtons();
+			eventScript.select_button_manager.openButtons();
 			eventScript.setSelectMode(true);
 		}
 	}
@@ -385,19 +388,19 @@ public class TalkEventScript : MonoBehaviour {
 		public override void Execute() {
 			switch (arguments[0]) {
 				case "play":
-					eventScript.audioSourceBGM.Play(arguments[1]);
+					eventScript.bgm_manager.Play(arguments[1]);
 					break;
 				case "stop":
-					eventScript.audioSourceBGM.Stop(int.Parse(arguments[1]));
+					eventScript.bgm_manager.Stop(int.Parse(arguments[1]));
 					break;
 				case "volume":
-					eventScript.audioSourceBGM.setVolume(int.Parse(arguments[1]));
+					eventScript.bgm_manager.setVolume(int.Parse(arguments[1]));
 					break;
 				case "pitch":
-					eventScript.audioSourceBGM.setPitch(int.Parse(arguments[1]));
+					eventScript.bgm_manager.setPitch(int.Parse(arguments[1]));
 					break;
 				case "pan":
-					eventScript.audioSourceBGM.setPan(int.Parse(arguments[1]));
+					eventScript.bgm_manager.setPan(int.Parse(arguments[1]));
 					break;
 				default:
 					Debug.Log("未設定の構文 : " + arguments[0]);
@@ -406,7 +409,7 @@ public class TalkEventScript : MonoBehaviour {
 		}
 	}
 
-	[System.Serializable]
+	[Serializable]
 	public class Condition {
 
 		[SerializeField]
@@ -414,7 +417,7 @@ public class TalkEventScript : MonoBehaviour {
 		public string value1;
 		public ConditionType conditionType;
 		public string value2;
-		private TalkEventValiable valiableObject;
+		private TalkEventValiableManager valiableManager;
 
 		public enum ConditionType {
 			equal,
@@ -429,7 +432,7 @@ public class TalkEventScript : MonoBehaviour {
 		}
 
 		public bool isCondition() {
-			valiableObject = GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>();
+			valiableManager = SystemManager.Instance.valiableManager;
 			switch (variableType) {
 				case VariableType.Int:
 					int i1 = a2v(value1) == null ? int.Parse(value1) : a2v(value1).getInt();
@@ -507,13 +510,10 @@ public class TalkEventScript : MonoBehaviour {
 			return false;
 		}
 		//argument to variable ：　引数が変数指定されていたら変数を返却。変数指定は<var=変数名>。もしくは<var=@ID>でのID指定が可能。
-		protected TalkEventValiable.Variable a2v(string arg) {
-			Debug.Log(arg);
-			if (GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().isVariable(arg)) {
-				Debug.Log("Variable");
-				return GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().getVariable_Command(arg);
+		protected TalkEventValiableManager.Variable a2v(string arg) {
+			if (valiableManager.isVariable(arg)) {
+				return valiableManager.getVariable_Command(arg);
 			} else {
-				Debug.Log("null");
 				return null;
 			}
 		}

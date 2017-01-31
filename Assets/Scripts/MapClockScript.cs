@@ -11,17 +11,17 @@ public class MapClockScript : MonoBehaviour {
 	private RectTransform t;
 
 	private Image imageComponent;
-	private virtualTimeScript virtualTime;
+	private TimeManager timeManager;
 
 	// Use this for initialization
 	void Start () {
 		if(imageComponent == null)imageComponent = GetComponent<Image>();
-		virtualTime = GameObject.FindGameObjectWithTag("Time").GetComponent<virtualTimeScript>();
+		timeManager = GameObject.FindGameObjectWithTag("Time").GetComponent<TimeManager>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		float timeRate = virtualTime.getTimeRateOfDay();
+		float timeRate = timeManager.getTimeRateOfDay();
 
 		if (mapClockMode) {
 

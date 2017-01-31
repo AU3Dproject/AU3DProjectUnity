@@ -34,9 +34,9 @@ public class AdjustPanelMove : MonoBehaviour {
 	void FixedUpdate () {
 
 		//メニュー開閉ボタン押下時
-		if (Input.GetButtonDown ("Cancel") && (PlayerControllerScript.activeFlag || isClose==true)) {
+		if (Input.GetButtonDown ("Cancel") && (PlayerManager.Instance.is_pause || isClose==true)) {
 			//Player動作とメニュー開閉を連動
-			PlayerControllerScript.activeFlag = isClose;
+			PlayerManager.Instance.is_pause = isClose;
 			//開閉アクション開始
 			isAction = true;
 		}
@@ -68,7 +68,7 @@ public class AdjustPanelMove : MonoBehaviour {
 				}
 			}
 		//Playerが動いてる時は選択解除
-		} else if(PlayerControllerScript.activeFlag) {
+		} else if(PlayerManager.Instance.is_pause) {
 			if(!isClose)DetachChild ();
 		}
 	}

@@ -19,7 +19,6 @@ public class MainMenuScript : MonoBehaviour {
             }
         }
 		mainMenu.gameObject.SetActive(false);
-		se = GameObject.Find("Manager").GetComponent<Manager>().SEManager.GetComponent<AudioSource>();
 	}
 
     // Update is called once per frame
@@ -28,20 +27,18 @@ public class MainMenuScript : MonoBehaviour {
             
 			//閉じるとき
             if (mainMenu.gameObject.activeInHierarchy) {
-				se.PlayOneShot(seClip);
 				EventSystem.current.SetSelectedGameObject(null);
 				foreach (Menu menu in mainMenu.transform.parent.GetComponentsInChildren<Menu>()) {
 					menu.Close();
 				}
                 mainMenu.gameObject.SetActive(false);
-                PlayerControllerScript.activeFlag = true;
+				PlayerManager.Instance.is_pause = true;
 				EventSystem.current.SetSelectedGameObject(null);
 			//開くとき
-			} else if(PlayerControllerScript.activeFlag) {
-				se.PlayOneShot(seClip);
+			} else if(PlayerManager.Instance.is_pause) {
 				mainMenu.gameObject.SetActive(true);
                 if(first.activeInHierarchy) EventSystem.current.SetSelectedGameObject(first);
-                PlayerControllerScript.activeFlag = false;
+				PlayerManager.Instance.is_pause = false;
             }
 
         }

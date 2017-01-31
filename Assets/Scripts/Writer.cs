@@ -537,7 +537,7 @@ public class Writer : MonoBehaviour {
 			public override bool isStart(string target) {
 				if (startRegex.Match(target).Success) {
 					string value = "";
-					value = GameObject.FindWithTag("variable").GetComponent<TalkEventValiable>().getVariable_Command(target).value;
+					value = TalkEventValiableManager.Instance.getVariable_Command(target).value;
 					writer.insertString(value);
 					return true;
 				} else {

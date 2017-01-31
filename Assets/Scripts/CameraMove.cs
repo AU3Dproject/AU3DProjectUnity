@@ -41,7 +41,7 @@ public class CameraMove : MonoBehaviour {
 	 */
 	public void Start () {
 		cameraComponent = GetComponent<Camera> ();
-		Player = GetComponentInParent <PlayerControllerScript> ().Player;
+		Player = PlayerManager.Instance.player_model;
 		playerModel = Player.GetComponentInChildren<SkinnedMeshRenderer>();
 	}
 
@@ -50,8 +50,8 @@ public class CameraMove : MonoBehaviour {
 	 * 　（１）三人称視点モードにより分岐
 	 * 　（２）カメラ動作処理
 	 */
-	public void FixedUpdate () {
-		if (PlayerControllerScript.activeFlag) {
+	public void Update () {
+		if (PlayerManager.Instance.is_pause) {
 			UpdateCamera();
 		}
 	}
@@ -67,10 +67,10 @@ public class CameraMove : MonoBehaviour {
 	private void UpdateCamera(){
 
 		//拡大率調整
-		this.zoom += Input.GetAxis ("Zoom") * 0.1f;
+		zoom += Input.GetAxis ("Zoom") * 0.1f;
 		//水平・垂直角度調整
-		this.HorizontalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("CameraHorizontal");
-		this.VerticalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("CameraVertical");
+		HorizontalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("CameraHorizontal");
+		VerticalAngle += Mathf.Deg2Rad * angle_speed * Input.GetAxisRaw ("CameraVertical");
 
 		//水平角度の数値上の制限
 		if (HorizontalAngle <= (isTP ? HorizontalAngleLimitTP.x : HorizontalAngleLimitFP.x) * Mathf.Deg2Rad)
@@ -98,23 +98,23 @@ public class CameraMove : MonoBehaviour {
 			newPos.z = - (distance) * Mathf.Cos (HorizontalAngle) + Player.transform.position.z;
 		}
 		//新座標値の反映
-		this.transform.position = newPos;
+		transform.position = newPos;
 
 		//CameraをPlayer方向へ向ける
-		this.transform.LookAt (Player.transform.position + new Vector3(0.0f,tall,0.0f));
+		transform.LookAt (Player.transform.position + new Vector3(0.0f,tall,0.0f));
 		//Cameraをx軸方向を調整
 		if (!isTP) {
-			float new_rotation_x = this.transform.localRotation.eulerAngles.x + VerticalAngle * Mathf.Rad2Deg;
-			float new_rotation_y = this.transform.localRotation.eulerAngles.y;
-			float new_rotation_z = this.transform.localRotation.eulerAngles.z;
+			float new_rotation_x = transform.localRotation.eulerAngles.x + VerticalAngle * Mathf.Rad2Deg;
+			float new_rotation_y = transform.localRotation.eulerAngles.y;
+			float new_rotation_z = transform.localRotation.eulerAngles.z;
 			this.transform.localRotation = Quaternion.Euler (new Vector3 (-new_rotation_x, new_rotation_y, new_rotation_z));
 		}
 
 		//Cameraの壁めり込み判定と調整
 		Vector3 ptv = Player.transform.position + new Vector3 (0, tall, 0);
-		Vector3 normal = (this.transform.position - ptv).normalized;
+		Vector3 normal = (transform.position - ptv).normalized;
 		if (Physics.Raycast (ptv, normal, out hit,distance + zoom,1)) {
-			this.transform.position = hit.point;
+			transform.position = hit.point;
 		}
 
 	}

@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using System;
 using UnityEngine.EventSystems;
 
-public class MapManager : MonoBehaviour {
+public class MapManager : ManagerMonoBehaviour<MapManager> {
 
 	public RectTransform detailContent;
 
@@ -24,7 +22,7 @@ public class MapManager : MonoBehaviour {
 		for (int i = 0; i < transform.childCount; i++) {
 			NavigationDetail detail = transform.GetChild(i).GetComponent<NavigationDetail>();
 			details.Add(detail);
-			GameObject clone = (GameObject)Instantiate(detailPrefab, detailContent);
+			GameObject clone = Instantiate(detailPrefab, detailContent);
 			clone.name = i.ToString();
 
 			RectTransform t = clone.GetComponent<RectTransform>();
