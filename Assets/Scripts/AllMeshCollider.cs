@@ -2,8 +2,9 @@
 
 public class AllMeshCollider : MonoBehaviour {
 
-	[SerializeField,Header("aaa")]
-	public string a;
+	[Header("このスクリプトを付与したオブジェクトの子すべてに対しMeshColliderを付与する。")]
+	[SerializeField,Header("↓この文字列のタグに対してはコライダーを付与しない。")]
+	public string no_collider_tag = "NoCollider";
 	
 	void Awake () {
 		addCollider(transform);
@@ -11,7 +12,7 @@ public class AllMeshCollider : MonoBehaviour {
 
 	private void addCollider(Transform parent) {
 		foreach(Transform child in parent) {
-			if (child.tag == "NoCollider") continue;
+			if (child.tag == no_collider_tag) continue;
 
 			if (child.childCount > 0) addCollider(child);
 

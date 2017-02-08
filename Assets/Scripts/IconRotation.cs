@@ -18,7 +18,7 @@ public class IconRotation : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (isRotate) {
+        if (transform.parent.GetComponent<MainMenuButton>().isOn) {
             rectTransform.Rotate(update_angle);
         } else {
             rectTransform.Rotate(Vector3.zero);

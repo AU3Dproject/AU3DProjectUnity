@@ -46,6 +46,7 @@ public class TimeManager: ManagerMonoBehaviour<TimeManager> {
 	[Tooltip("曜日を区切る文字列(曜日の後ろの文字)(dowはday of weekの略)")]
 	public string dowSeparate = "曜日 ";
 
+	public bool flashingEnable = true;
 	public int flashingPeriod = 1;
 
 	public enum DowType {
@@ -99,18 +100,22 @@ public class TimeManager: ManagerMonoBehaviour<TimeManager> {
 
 		}
 
-		if (flashingPeriod > 0) {
-			flashingCount += Time.deltaTime;
-			if (flashingCount >= flashingPeriod) {
-				flashing = !flashing;
-				flashingCount -= flashingPeriod;
+		if (flashingEnable) {
+			if (flashingPeriod > 0) {
+				flashingCount += Time.deltaTime;
+				if (flashingCount >= flashingPeriod) {
+					flashing = !flashing;
+					flashingCount -= flashingPeriod;
+				}
+			} else {
+				if (virtualDateTime.Second % 2 == 0) {
+					flashing = true;
+				} else {
+					flashing = false;
+				}
 			}
 		} else {
-			if (virtualDateTime.Second % 2 == 0) {
-				flashing = true;
-			}else {
-				flashing = false;
-			}
+			flashing = false;
 		}
 
 	}
