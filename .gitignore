@@ -26,10 +26,10 @@ Assets/BulletXNA/
 Assets/Plugins/
 
 # Assets : EnhancedScroller
-Assets/EnhancedScroller v2
+Assets/EnhancedScroller v2/
 
 #Assets : Demigiant(Dotween)
-Assets/Demigiant
+Assets/Demigiant/
 
 # execute file
 /au3d_build
