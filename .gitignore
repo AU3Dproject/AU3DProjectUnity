@@ -25,5 +25,11 @@ Assets/MMD4Mecanim/
 Assets/BulletXNA/
 Assets/Plugins/
 
+# Assets : EnhancedScroller
+/EnhancedScroller v2
+
+#Assets : Demigiant(Dotween)
+/Demigiant
+
 # execute file
 /au3d_build
