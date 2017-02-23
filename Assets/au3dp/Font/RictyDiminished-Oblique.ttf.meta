@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: ecb4f95968155b14eb41cf16d7cfbd01
+timeCreated: 1485839237
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Ricty Diminished
+  fontNames:
+  - Ricty Diminished
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 9f47c53298d7c87449a7d34c0330e24a, type: 3}
+  - {fileID: 12800000, guid: 1545dd94cfcb28b429ca8aa87bbadd8b, type: 3}
+  - {fileID: 12800000, guid: 555506eb107fe5c4b81a824a9f094aff, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
