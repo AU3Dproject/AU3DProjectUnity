@@ -9,7 +9,7 @@ using EnhancedUI.EnhancedScroller;
 /// <param name="cellView">The cell view that had the button click</param>
 public delegate void SelectedDelegate(EnhancedScrollerCellView cellView);
 
-public class AnimalCellView : EnhancedScrollerCellView {
+public class MapAnimalCellView : EnhancedScrollerCellView {
 
 	public Text place_name_text;
 	public Text description_text;
@@ -19,12 +19,30 @@ public class AnimalCellView : EnhancedScrollerCellView {
 	public Color selected_color = Color.red;
 	public Color normaled_color = Color.white;
 
-	SelectedDelegate selected;
+	public SelectedDelegate selected;
 
-	public void SetData(ScrollerData data) {
+	/// <summary>
+	/// Public reference to the index of the data
+	/// </summary>
+	public int DataIndex {
+		get; private set;
+	}
+
+	public void SetData(int data_index , MapData data) {
+		if (data != null) {
+			data.selectedChanged -= SelectedChanged;
+		}
+
 		place_name_text.text = data.place_name;
 		description_text.text = data.description;
 		thumbnail_image.sprite = Resources.Load<Sprite>(data.thumbnail_url);
+
+		DataIndex = data_index;
+
+		data.selectedChanged = SelectedChanged;
+
+		// update the selection state UI
+		SelectedChanged(data.Selected);
 	}
 
 	/// <summary>
@@ -33,6 +51,7 @@ public class AnimalCellView : EnhancedScrollerCellView {
 	/// </summary>
 	/// <param name="selected">The selection state of the cell</param>
 	private void SelectedChanged(bool selected) {
+		Debug.Log("CellView - SelectedChanged -" + place_name_text + " - " +selected);
 		selection_panel.color = (selected ? selected_color : normaled_color);
 	}
 

@@ -282,7 +282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.04827571, b: 1, a: 0.409}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.19607843}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -313,8 +313,8 @@ MonoBehaviour:
   description_text: {fileID: 114441643773739582}
   thumbnail_image: {fileID: 114280046504528176}
   selection_panel: {fileID: 114723250575082842}
-  selected_color: {r: 1, g: 0, b: 0, a: 1}
-  normaled_color: {r: 1, g: 1, b: 1, a: 1}
+  selected_color: {r: 1, g: 1, b: 1, a: 0.19607843}
+  normaled_color: {r: 0, g: 0, b: 0, a: 0.19607843}
 --- !u!222 &222694002930929366
 CanvasRenderer:
   m_ObjectHideFlags: 1
