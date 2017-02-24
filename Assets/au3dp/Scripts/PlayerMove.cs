@@ -62,7 +62,7 @@ public class PlayerMove : MonoBehaviour {
 	 */
 	private void move(){
 		moveGravity ();
-		if (PlayerManager.Instance.is_pause) {
+		if (!PlayerManager.Instance.is_pause) {
 			moveInit ();
 			moveJump ();
 			moveWalking ();

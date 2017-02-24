@@ -70,8 +70,10 @@ public class Writer : MonoBehaviour {
 		//表示開始であれば処理開始
 		if (isTextActive && text != "") {
 
-			if (waitArrow.isVisible) {
-				waitArrow.setVisible(false);
+			if (waitArrow != null) {
+				if (waitArrow.isVisible) {
+					waitArrow.setVisible(false);
+				}
 			}
 			
 			//時間の計測を行う

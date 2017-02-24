@@ -75,7 +75,7 @@ public class TalkEventScript : MonoBehaviour {
 		text_window = GameObject.Find("/Canvases").transform.Find("TalkEventCanvas").gameObject;
 		writer = text_window.transform.GetChild(0).GetComponent<Writer>();
 		select_button_manager = text_window.transform.GetChild(1).GetComponent<TalkEventSelectButton>();
-		//bgm_manager = GameObject.Find("/Manager").GetComponent<Manager>().BGMManager;
+		bgm_manager = BGMManager.Instance;
 		text_window.SetActive(false);
 		loadEventScript();
 
@@ -109,7 +109,7 @@ public class TalkEventScript : MonoBehaviour {
 					if (isCondition()) {
 						is_execute = true;
 					}
-					PlayerManager.Instance.is_pause = false;
+					PlayerManager.Instance.is_pause = true;
 					is_event_end = false;
 				}
 
@@ -122,8 +122,8 @@ public class TalkEventScript : MonoBehaviour {
 		}
 
 		//イベント終了時にPlayerの動作を開始する
-		if (!is_execute && !PlayerManager.Instance.is_pause && !is_event_end) {
-			PlayerManager.Instance.is_pause = true;
+		if (!is_execute && PlayerManager.Instance.is_pause && !is_event_end) {
+			PlayerManager.Instance.is_pause = false;
 			is_event_end = true;
 		}
 

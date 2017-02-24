@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BGMManager : MonoBehaviour {
+public class BGMManager : ManagerMonoBehaviour<BGMManager> {
 
 	private AudioSource audioSource = null;
 	public float fadeOutTime = 0;

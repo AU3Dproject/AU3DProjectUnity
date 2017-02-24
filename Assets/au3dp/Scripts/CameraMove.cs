@@ -51,7 +51,7 @@ public class CameraMove : MonoBehaviour {
 	 * 　（２）カメラ動作処理
 	 */
 	public void Update () {
-		if (PlayerManager.Instance.is_pause) {
+		if (!PlayerManager.Instance.is_pause) {
 			UpdateCamera();
 		}
 	}
@@ -111,11 +111,14 @@ public class CameraMove : MonoBehaviour {
 		}
 
 		//Cameraの壁めり込み判定と調整
-		Vector3 ptv = Player.transform.position + new Vector3 (0, tall, 0);
-		Vector3 normal = (transform.position - ptv).normalized;
-		if (Physics.Raycast (ptv, normal, out hit,distance + zoom,1)) {
-			transform.position = hit.point;
-		}
+		//Vector3 ptv = Player.transform.position + new Vector3 (0, tall, 0);
+		//Vector3 normal = (transform.position - ptv).normalized;
+		//LayerMask mask = (1 << 9) + (1 << 10);
+		//if (Physics.Raycast (ptv, normal, out hit,distance + zoom,mask)) {
+		//	transform.position = hit.point;
+		//	Debug.ClearDeveloperConsole();
+		//	Debug.Log(hit);
+		//}
 
 	}
 
