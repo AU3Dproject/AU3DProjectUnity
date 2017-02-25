@@ -1,5 +1,4 @@
-﻿
-/// <summary>
+﻿/// <summary>
 /// This delegate handles any changes to the selection state of the data
 /// </summary>
 /// <param name="val">The state of the selection</param>
@@ -9,6 +8,7 @@ public class MapData {
 	public string place_name;
 	public string description;
 	public string thumbnail_url;
+	public int id;
 
 
 	/// <summary>

@@ -633,7 +633,8 @@ namespace EnhancedUI.EnhancedScroller
             bool useSpacing = true,
             TweenType tweenType = TweenType.immediate,
             float tweenTime = 0f,
-            Action jumpComplete = null
+            Action jumpComplete = null,
+			float max_position = -1
             )
         {
             // ignore the jump if the active cell range is entirely inside the scroller's visible area
@@ -725,9 +726,9 @@ namespace EnhancedUI.EnhancedScroller
                 // move back by the spacing if necessary
                 newScrollPosition = Mathf.Clamp(newScrollPosition - spacing, 0, GetScrollPositionForCellViewIndex(_cellViewSizeArray.Count - 1, CellViewPositionEnum.Before));
             }
-
+			
             // start tweening
-            StartCoroutine(TweenPosition(tweenType, tweenTime, ScrollPosition, newScrollPosition, jumpComplete));
+            StartCoroutine(TweenPosition(tweenType, tweenTime, ScrollPosition, max_position>newScrollPosition?newScrollPosition:max_position, jumpComplete));
         }
 
         /// <summary>

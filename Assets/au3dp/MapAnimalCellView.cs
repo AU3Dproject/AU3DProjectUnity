@@ -7,6 +7,7 @@ using EnhancedUI.EnhancedScroller;
 /// This delegate handles the UI's button click
 /// </summary>
 /// <param name="cellView">The cell view that had the button click</param>
+public delegate void DecidedDelegate(EnhancedScrollerCellView cellView);
 public delegate void SelectedDelegate(EnhancedScrollerCellView cellView);
 
 public class MapAnimalCellView : EnhancedScrollerCellView {
@@ -19,6 +20,7 @@ public class MapAnimalCellView : EnhancedScrollerCellView {
 	public Color selected_color = Color.red;
 	public Color normaled_color = Color.white;
 
+	public DecidedDelegate decided;
 	public SelectedDelegate selected;
 
 	/// <summary>
@@ -51,16 +53,21 @@ public class MapAnimalCellView : EnhancedScrollerCellView {
 	/// </summary>
 	/// <param name="selected">The selection state of the cell</param>
 	private void SelectedChanged(bool selected) {
-		Debug.Log("CellView - SelectedChanged -" + place_name_text + " - " +selected);
 		selection_panel.color = (selected ? selected_color : normaled_color);
 	}
 
 	/// <summary>
 	/// This function is called by the cell's button click event
 	/// </summary>
-	public void OnSelected() {
+	public void OnDecided() {
 		// if a handler exists for this cell, then
 		// call it.
+		if (decided != null) {
+			decided(this);
+		}
+	}
+
+	public void OnSelected() {
 		if (selected != null) {
 			selected(this);
 		}
