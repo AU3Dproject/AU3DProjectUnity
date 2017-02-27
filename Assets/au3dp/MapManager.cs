@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using EnhancedUI.EnhancedScroller;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// MapManager - マップデータ（ナビゲーションプレイス）の管理を行う
@@ -39,6 +40,18 @@ public class MapManager : ManagerMonoBehaviour<MapManager>, IEnhancedScrollerDel
 		myScroller.Delegate = this;
 		myScroller.ReloadData();
 	}
+
+	//void Update() {
+	//	if (Input.GetButtonDown("MoveVertical")) {
+	//		int direction = (int)Input.GetAxisRaw("MoveVertical");
+	//		if (direction > 0) {
+	//			CellViewMovingUp();
+	//		}
+	//		if (direction < 0) {
+	//			CellViewMovingDown();
+	//		}
+	//	}
+	//}
 
 	/// <summary>
 	/// GetNumberOfCells - マップのデータの数
@@ -92,28 +105,48 @@ public class MapManager : ManagerMonoBehaviour<MapManager>, IEnhancedScrollerDel
 			for (var i = 0; i < _data.Count; i++) {
 				if (_data[i].Selected = (selectedDataIndex == i)) {
 					NavigationManager.Instance.setToTarget(transform.GetChild(i).gameObject);
+					transform.GetChild(i).GetChild(1).GetComponent<MeshRenderer>().enabled = true;
+				} else {
+					transform.GetChild(i).GetChild(1).GetComponent<MeshRenderer>().enabled = false;
 				}
 			}
 
 		}
 	}
 
+	//private void CellViewMovingDown() {
+	//	for (var i = 0; i < _data.Count; i++) {
+	//		if (_data[i].Selected) {
+	//			jump((i+1)%GetNumberOfCells(myScroller));
+	//			_data[i].Selected = false;
+	//			_data[(i + 1) % GetNumberOfCells(myScroller)].Selected = true;
+	//			break;
+	//		}
+	//	}
+	//}
+	//private void CellViewMovingUp() {
+	//	for (var i = 0; i < _data.Count; i++) {
+	//		if (_data[i].Selected) {
+	//			jump( ((i - 1)<0?(i-1+ GetNumberOfCells(myScroller)):(i-1) ) % GetNumberOfCells(myScroller));
+	//			_data[i].Selected = false;
+	//			_data[((i - 1) < 0 ? (i - 1 + GetNumberOfCells(myScroller)) : (i - 1)) % GetNumberOfCells(myScroller)].Selected = true;
+	//			break;
+	//		}
+	//	}
+	//}
+
 	/// <summary>
-	/// This function handles the cell view's button click event
+	/// { function handles the cell view's button select event
 	/// </summary>
 	/// <param name="cellView">The cell view that had the button clicked</param>
 	private void CellViewSelected(EnhancedScrollerCellView cellView) {
-			// get the selected data index of the cell view
-			var selectedDataIndex = (cellView as MapAnimalCellView).DataIndex;
-			jump(selectedDataIndex);
+		var selectedDataIndex = (cellView as MapAnimalCellView).DataIndex;
+		jump(selectedDataIndex);
 	}
 
 	public void jump(int dataIndex) {
-		myScroller.JumpToDataIndex(dataIndex, jump_scroller_offset, jump_cell_offset, useSpacing, EnhancedScroller.TweenType.linear, 0.1f, null, myScroller.ScrollSize);
-	}
-
-	public void focus() {
-		//EventSystem.current.SetSelectedGameObject(transform.GetChild(0).GetChild(1).gameObject);
+		Debug.Log(dataIndex);
+		myScroller.JumpToDataIndex(dataIndex, jump_scroller_offset, jump_cell_offset, useSpacing, EnhancedScroller.TweenType.linear, 0.1f,null, myScroller.ScrollSize);
 	}
 
 }

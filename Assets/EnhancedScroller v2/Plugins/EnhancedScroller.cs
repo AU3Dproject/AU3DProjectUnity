@@ -824,6 +824,11 @@ namespace EnhancedUI.EnhancedScroller
             return _GetCellIndexAtPosition(position, 0, _cellViewOffsetArray.Count - 1);
         }
 
+		public void FocusCell(int id=0) {
+			EventSystem.current.SetSelectedGameObject(null);
+			EventSystem.current.SetSelectedGameObject(_container.GetComponentsInChildren<EnhancedScrollerCellView>()[0].gameObject);
+		}
+
 		#endregion
 
 		#region Private

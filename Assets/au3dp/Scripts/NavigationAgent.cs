@@ -32,6 +32,7 @@ public class NavigationAgent : MonoBehaviour {
 			path = new UnityEngine.AI.NavMeshPath();
 			agent.CalculatePath(toTarget.transform.position, path);
 
+			//line.numCornerVertices = path.corners.Length;
 			line.SetVertexCount(path.corners.Length);
 
 			Vector3[] destination = path.corners;

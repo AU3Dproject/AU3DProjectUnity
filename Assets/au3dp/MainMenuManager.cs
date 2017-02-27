@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MainMenuManager : ManagerMonoBehaviour<MainMenuManager> {
 
@@ -18,7 +19,7 @@ public class MainMenuManager : ManagerMonoBehaviour<MainMenuManager> {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.Escape)) {
+		if (Input.GetButtonDown("Cancel") && main_menu_button_group_component.isInteractive) {
 			SwitchingOpen();
 		}
 	}
@@ -38,6 +39,7 @@ public class MainMenuManager : ManagerMonoBehaviour<MainMenuManager> {
 		foreach (Transform menu in transform) {
 			menu.gameObject.SetActive(true);
 		}
+		PlayerManager.Instance.is_pause = true;
 	}
 
 	public void Close() {
@@ -45,6 +47,9 @@ public class MainMenuManager : ManagerMonoBehaviour<MainMenuManager> {
 		foreach (Transform menu in transform) {
 			menu.gameObject.SetActive(false);
 		}
+		PlayerManager.Instance.is_pause = false;
+		main_menu_button_group_component.isInteractive = true;
+		EventSystem.current.SetSelectedGameObject(null);
 	}
 
 	public void SetDescription(string description) {

@@ -8,6 +8,7 @@ public class MainMenuButtonGroup : ToggleGroup{
 
 	private MainMenuButton[] toggles;
 	private int on_index = 0;
+	public bool isInteractive = true;
 
 	protected override void Start() {
 		on_index = 0;
@@ -17,11 +18,18 @@ public class MainMenuButtonGroup : ToggleGroup{
 
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetButtonDown("MoveHorizontal")) {
-			if (Input.GetAxisRaw("MoveHorizontal") < 0) {
-				BeforeOnToggle();
-			} else if (Input.GetAxisRaw("MoveHorizontal") > 0) {
-				NextOnToggle();
+		if (isInteractive) {
+			if (Input.GetButtonDown("MoveHorizontal")) {
+				if (Input.GetAxisRaw("MoveHorizontal") < 0) {
+					BeforeOnToggle();
+				} else if (Input.GetAxisRaw("MoveHorizontal") > 0) {
+					NextOnToggle();
+				}
+			}
+		} else {
+			if (Input.GetButtonDown("Cancel")) {
+				isInteractive = true;
+				EventSystem.current.SetSelectedGameObject(null);
 			}
 		}
 	}

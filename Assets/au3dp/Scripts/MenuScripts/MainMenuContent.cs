@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using EnhancedUI.EnhancedScroller;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -23,8 +24,12 @@ public class MainMenuContent : MonoBehaviour {
 			if (selected_description != "") {
 				MainMenuManager.Instance.description_component.setDescription(selected_description);
 			}
-			//event_system.SetSelectedGameObject(null);
-			//event_system.SetSelectedGameObject(firstSelect);
+			if (firstSelect.GetComponentInChildren<EnhancedScroller>() != null) {
+				firstSelect.GetComponentInChildren<EnhancedScroller>().FocusCell();
+			} else {
+				event_system.SetSelectedGameObject(null);
+				event_system.SetSelectedGameObject(firstSelect);
+			}
 		}
 	}
 

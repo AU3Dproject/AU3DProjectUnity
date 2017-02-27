@@ -8,7 +8,6 @@ public class MapData {
 	public string place_name;
 	public string description;
 	public string thumbnail_url;
-	public int id;
 
 
 	/// <summary>

@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using EnhancedUI.EnhancedScroller;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// This delegate handles the UI's button click
@@ -54,6 +55,7 @@ public class MapAnimalCellView : EnhancedScrollerCellView {
 	/// <param name="selected">The selection state of the cell</param>
 	private void SelectedChanged(bool selected) {
 		selection_panel.color = (selected ? selected_color : normaled_color);
+		//if(selected)EventSystem.current.SetSelectedGameObject(gameObject);
 	}
 
 	/// <summary>
