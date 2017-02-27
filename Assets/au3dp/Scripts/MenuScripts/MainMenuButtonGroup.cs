@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class MainMenuButtonGroup : ToggleGroup{
@@ -26,7 +27,6 @@ public class MainMenuButtonGroup : ToggleGroup{
 	}
 
 	public void SetOnToggle(int index) {
-		print(index + " " + toggles[index]);
 		for (int i = 0; i < toggles.Length; i++) {
 			if (i == index) {
 				toggles[i].isOn = true;
@@ -42,24 +42,35 @@ public class MainMenuButtonGroup : ToggleGroup{
 	}
 
 	public void NextOnToggle() {
-		toggles[on_index].isOn = false;
-		toggles[on_index].SetIconRotation(false);
+		//toggles[on_index].isOn = false;
+		//toggles[on_index].SetIconRotation(false);
 		on_index = (on_index + 1) % toggles.Length;
-		toggles[on_index].isOn = true;
-		toggles[on_index].SetIconRotation(true);
-		MainMenuManager.Instance.SetDescription(toggles[on_index].information.description);
-		MainMenuManager.Instance.SetTitle(toggles[on_index].information.title);
-		MainMenuManager.Instance.FocusContents(on_index);
+		//toggles[on_index].isOn = true;
+		//toggles[on_index].SetIconRotation(true);
+		//MainMenuManager.Instance.SetDescription(toggles[on_index].information.description);
+		//MainMenuManager.Instance.SetTitle(toggles[on_index].information.title);
+		//MainMenuManager.Instance.FocusContents(on_index);
+		SetOnToggle(on_index);
 	}
 
 	public void BeforeOnToggle() {
-		toggles[on_index].isOn = false;
-		toggles[on_index].SetIconRotation(false);
+		//toggles[on_index].isOn = false;
+		//toggles[on_index].SetIconRotation(false);
 		on_index = (on_index + toggles.Length - 1) % toggles.Length;
-		toggles[on_index].isOn = true;
-		toggles[on_index].SetIconRotation(true);
-		MainMenuManager.Instance.SetDescription(toggles[on_index].information.description);
-		MainMenuManager.Instance.SetTitle(toggles[on_index].information.title);
-		MainMenuManager.Instance.FocusContents(on_index);
+		//toggles[on_index].isOn = true;
+		//toggles[on_index].SetIconRotation(true);
+		//MainMenuManager.Instance.SetDescription(toggles[on_index].information.description);
+		//MainMenuManager.Instance.SetTitle(toggles[on_index].information.title);
+		//MainMenuManager.Instance.FocusContents(on_index);
+		SetOnToggle(on_index);
+	}
+
+	public void OnToggleUpdate() {
+		for (int i = 0; i < toggles.Length; i++) {
+			if (toggles[i].isOn) {
+				on_index = i;
+			}
+		}
+		SetOnToggle(on_index);
 	}
 }

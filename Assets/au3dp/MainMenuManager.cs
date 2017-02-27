@@ -26,8 +26,10 @@ public class MainMenuManager : ManagerMonoBehaviour<MainMenuManager> {
 	public void SwitchingOpen() {
 		if (isOpen) {
 			Close();
+			PlayerManager.Instance.is_pause = false;
 		} else {
 			Open();
+			PlayerManager.Instance.is_pause = true;
 		}
 	}
 
@@ -62,5 +64,7 @@ public class MainMenuManager : ManagerMonoBehaviour<MainMenuManager> {
 			contents_manager_component.FocusContents(index);
 		}
 	}
+
+	 
 
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using EnhancedUI.EnhancedScroller;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// MapManager - マップデータ（ナビゲーションプレイス）の管理を行う
@@ -105,11 +106,14 @@ public class MapManager : ManagerMonoBehaviour<MapManager>, IEnhancedScrollerDel
 			// get the selected data index of the cell view
 			var selectedDataIndex = (cellView as MapAnimalCellView).DataIndex;
 			jump(selectedDataIndex);
-			Debug.Log("selected - "+selectedDataIndex);
 	}
 
 	public void jump(int dataIndex) {
 		myScroller.JumpToDataIndex(dataIndex, jump_scroller_offset, jump_cell_offset, useSpacing, EnhancedScroller.TweenType.linear, 0.1f, null, myScroller.ScrollSize);
+	}
+
+	public void focus() {
+		//EventSystem.current.SetSelectedGameObject(transform.GetChild(0).GetChild(1).gameObject);
 	}
 
 }

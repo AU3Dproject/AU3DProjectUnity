@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System;
+using UnityEngine.EventSystems;
 
 namespace EnhancedUI.EnhancedScroller
 {
@@ -823,14 +824,22 @@ namespace EnhancedUI.EnhancedScroller
             return _GetCellIndexAtPosition(position, 0, _cellViewOffsetArray.Count - 1);
         }
 
-        #endregion
+		#endregion
 
-        #region Private
+		#region Private
 
-        /// <summary>
-        /// Cached reference to the scrollRect
-        /// </summary>
-        private ScrollRect _scrollRect;
+		/// <summary>
+		/// Cached reference to the scrollRect
+		/// </summary>
+
+		#endregion
+
+		#region Private
+
+		/// <summary>
+		/// Cached reference to the scrollRect
+		/// </summary>
+		 private ScrollRect _scrollRect;
 
         /// <summary>
         /// Cached reference to the scrollRect's transform
