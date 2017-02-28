@@ -23,23 +23,26 @@ public class NavigationAgent : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (fromTarget != null && toTarget != null && agent != null && line != null && agent.pathStatus != UnityEngine.AI.NavMeshPathStatus.PathInvalid) {
+
+		//agent.Warp(PlayerManager.Instance.transform.position);
+
+		if (fromTarget != null && toTarget != null && agent != null && line != null && agent.pathStatus != UnityEngine.AI.NavMeshPathStatus.PathInvalid && line.enabled==false) {
+
 			line.enabled = true;
-			transform.position = new Vector3(fromTarget.transform.position.x, transform.position.y, fromTarget.transform.position.z);
-			agent.Warp(transform.position);
-			transform.rotation = fromTarget.transform.rotation;
+
+			agent.SetDestination(toTarget.transform.position);
 
 			path = new UnityEngine.AI.NavMeshPath();
 			agent.CalculatePath(toTarget.transform.position, path);
 
-			//line.numCornerVertices = path.corners.Length;
-			line.SetVertexCount(path.corners.Length);
+			line.numPositions = path.corners.Length;
+			//line.SetVertexCount(path.corners.Length);
 
 			Vector3[] destination = path.corners;
 
-			for (int i=0;i<destination.Length;i++) {
-				destination[i] = new Vector3(destination[i].x,destination[i].y+tall,destination[i].z);
-			}
+			//for (int i=0;i<destination.Length;i++) {
+			//	destination[i] = new Vector3(destination[i].x,destination[i].y+tall,destination[i].z);
+			//}
 
 			line.SetPositions(destination);
 
