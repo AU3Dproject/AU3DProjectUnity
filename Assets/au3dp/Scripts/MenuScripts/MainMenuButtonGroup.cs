@@ -26,6 +26,12 @@ public class MainMenuButtonGroup : ToggleGroup{
 					NextOnToggle();
 				}
 			}
+			if (Input.GetButtonDown("L1")) {
+				BeforeOnToggle();
+			}
+			if (Input.GetButtonDown("R1")) {
+				NextOnToggle();
+			}
 		} else {
 			if (Input.GetButtonDown("Cancel")) {
 				isInteractive = true;

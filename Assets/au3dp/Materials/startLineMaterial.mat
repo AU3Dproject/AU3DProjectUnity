@@ -69,6 +69,18 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - first:
+        name: _Ramp
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ToonShade
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
         name: _BumpScale
@@ -93,7 +105,7 @@ Material:
       second: 1
     - first:
         name: _InvFade
-      second: 1
+      second: 3
     - first:
         name: _Metallic
       second: 0
@@ -103,6 +115,9 @@ Material:
     - first:
         name: _OcclusionStrength
       second: 1
+    - first:
+        name: _Outline
+      second: 0.005
     - first:
         name: _Parallax
       second: 0.02
@@ -124,10 +139,13 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 1, g: 0, b: 0, a: 0}
+      second: {r: 1, g: 0.32941177, b: 0.32941177, a: 0}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
     - first:
+        name: _OutlineColor
+      second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
         name: _TintColor
-      second: {r: 0.9972143, g: 1, b: 0, a: 0.078431375}
+      second: {r: 1, g: 1, b: 1, a: 0.703}

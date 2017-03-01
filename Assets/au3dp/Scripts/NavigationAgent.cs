@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class NavigationAgent : MonoBehaviour {
 
@@ -9,11 +10,10 @@ public class NavigationAgent : MonoBehaviour {
 
 	private UnityEngine.AI.NavMeshAgent agent;
 	private UnityEngine.AI.NavMeshPath path;
-	public LineRenderer line;
+	public Material line_material;
+	public Material node_material;
 
-	public Material startLineMaterial;
-	public Material endLineMaterial;
-	public Material normalLineMaterial;
+	private List<GameObject> line_list = new List<GameObject>();
 
 	// Use this for initialization
 	void Start () {
@@ -24,42 +24,64 @@ public class NavigationAgent : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		//agent.Warp(PlayerManager.Instance.transform.position);
+		if (agent.pathStatus == UnityEngine.AI.NavMeshPathStatus.PathComplete) {
+			agent.Warp(PlayerManager.Instance.player_model.transform.position);
+		}
 
-		if (fromTarget != null && toTarget != null && agent != null && line != null && agent.pathStatus != UnityEngine.AI.NavMeshPathStatus.PathInvalid && line.enabled==false) {
+		if (fromTarget != null && toTarget != null && agent != null && agent.pathStatus != UnityEngine.AI.NavMeshPathStatus.PathInvalid) {
 
-			line.enabled = true;
+			//line.enabled = true;
 
 			agent.SetDestination(toTarget.transform.position);
 
 			path = new UnityEngine.AI.NavMeshPath();
 			agent.CalculatePath(toTarget.transform.position, path);
 
-			line.numPositions = path.corners.Length;
+			//line.numPositions = path.corners.Length;
 			//line.SetVertexCount(path.corners.Length);
 
 			Vector3[] destination = path.corners;
 
-			//for (int i=0;i<destination.Length;i++) {
-			//	destination[i] = new Vector3(destination[i].x,destination[i].y+tall,destination[i].z);
-			//}
+			for (int i = 0; i < destination.Length; i++) {
+				destination[i] = new Vector3(destination[i].x, destination[i].y + tall, destination[i].z);
+			}
 
-			line.SetPositions(destination);
-
-			//for (int i = 0; i < line.materials.Length; i++) {
-			//	if (i == 0) {
-			//		line.materials[i] = startLineMaterial;
-			//	} else if (i == line.materials.Length - 1) {
-			//		line.materials[i] = endLineMaterial;
-			//	} else {
-			//		line.materials[i] = normalLineMaterial;
-			//	}
-			//}
+			removeLine();
+			drawNode(destination[0]);
+			for (int i = 0; i < destination.Length-1; i++) {
+				drawLine(destination[i], destination[i + 1]);
+			}
+			
 
 		}
 
 		if (toTarget == null) {
-			line.enabled = false;
+			removeLine();
+		}
+	}
+
+	private void drawLine(Vector3 from, Vector3 to) {
+		GameObject line_renderer_object = new GameObject("lineRenderer", typeof(LineRenderer));
+		LineRenderer line_renderer = line_renderer_object.GetComponent<LineRenderer>();
+		line_renderer.SetPositions(new Vector3[] { from, to });
+		line_renderer.material = line_material;
+		line_renderer_object.transform.parent = transform;
+	}
+
+	private void drawNode(Vector3 start) {
+		GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		go.GetComponent<SphereCollider>().enabled = false;
+		go.GetComponent<MeshRenderer>().material = node_material;
+		go.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+		go.transform.position = start;
+		go.transform.parent = transform;
+	}
+
+	private void removeLine() {
+		if (transform.childCount > 0) {
+			foreach (Transform child in transform) {
+				Destroy(child.gameObject);
+			}
 		}
 	}
 
