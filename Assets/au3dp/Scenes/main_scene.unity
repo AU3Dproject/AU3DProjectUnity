@@ -22890,8 +22890,7 @@ MonoBehaviour:
     \u8CEA\u554F\u304C\u3057\u305F\u3044 music]\n[add_select \u3055\u3088\u306A\u3089
     bye]\n[open_select]\nmusic:\n[l]\n\u4F55\u304C\u805E\u304D\u305F\u3044\u3067\u3059\u304B\uFF1F\n[p]\n[l]\n[add_select
     \u4ECA\u65E5\u306F\u306A\u3093\u306E\u65E5\uFF1F oda]\n[add_select \u3053\u306E\u30A2\u30D7\u30EA\u306F\u4F55\uFF1F
-    hsi]\n[add_select \u64CD\u4F5C\u65B9\u6CD5\u3092\u6559\u3048\u3066 ngi]\n[open_select]\noda:\n\u4ECA\u65E5\u306F
-    <b>\u5B66\u751F\u81EA\u4E3B\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u306E\u6210\u679C\u5831\u544A\u4F1A</b>\u3060\u3088\uFF01<wait=2.0>\n\u3069\u306E\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u3082\u3059\u3054\u3044\u6210\u679C\u3060\u306D\uFF01<wait=2.0>\n[p]\n[l]\n[goto
+    hsi]\n[add_select \u64CD\u4F5C\u65B9\u6CD5\u3092\u6559\u3048\u3066 ngi]\n[open_select]\noda:\n\u81EA\u5206\u3067\u8ABF\u3079\u3066\u306D\uFF01\uFF01\uFF01\n\uFF08\u672A\u5B9F\u88C5\uFF09\n[p]\n[l]\n[goto
     bgmend]\nhsi:\n\u3053\u306E\u30A2\u30D7\u30EA\u306F\u79CB\u7530\u5927\u5B663D\u5316\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u306E\u4F5C\u3063\u3066\u3044\u308B\u9053\u6848\u5185\u30A2\u30D7\u30EA\u3067\u3059\u3002<wait=2.0>\n\u79CB\u7530\u5927\u5B66\u306E\u7D39\u4ECB\u3084\u3001\u9053\u6848\u5185\u3092\u4E3B\u306B\u884C\u3046\u3082\u306E\u306B\u3059\u308B\u4E88\u5B9A\u3067\u3059\uFF01<wait=2.0>\n\u73FE\u5728\u3082\u69D8\u3005\u306A\u6A5F\u80FD\u306E\u8FFD\u52A0\u3092\u884C\u3063\u3066\u304A\u308A\u307E\u3059\uFF01<wait=2.0>\n[p]\n[l]\n\u30B7\u30B9\u30C6\u30E0\u9762\u3067\u306F\u3001\u30CA\u30D3\u30B2\u30FC\u30B7\u30E7\u30F3\u306E\u30A2\u30EB\u30B4\u30EA\u30BA\u30E0\u306E\u6539\u826F\u3084\u3001\n\u30E1\u30CB\u30E5\u30FC\u753B\u9762\u306E\u6539\u826F\u3001\u30A4\u30D9\u30F3\u30C8\u3092\u5897\u3084\u3057\u305F\u308A\u3001\n\u30A2\u30A4\u30C6\u30E0\u53CE\u96C6\u306A\u3069\u306E\u30B3\u30EC\u30AF\u30B7\u30E7\u30F3\u8981\u7D20\u306E\u8FFD\u52A0\u306A\u3069\u3092\u4ECA\u5F8C\u3001\u4E88\u5B9A\u3057\u3066\u307E\u3059\uFF01<wait=2.0>\n\u307E\u305F\u3001\u56F3\u66F8\u9928\u5185\u90E8\u306E3D\u30E2\u30C7\u30EB\u4F5C\u6210\u3084\u3001VR\u3078\u306E\u5BFE\u5FDC\u306A\u3069\u3082\u884C\u3046\u4E88\u5B9A\u3067\u3059\uFF01<wait=2.0>\n[p]\n[l]\n[goto
     bgmend]\nngi:\n<speed=0>\u300C\u3000\u30AD\u30FC\u30DC\u30FC\u30C9\u306E\u5834\u5408\u3000\u300D\nWASD\u3000\uFF1A\u3000\u79FB\u52D5\u3000\u3000\u3000\u3000
     \ \u3000\u65B9\u5411\u30AD\u30FC\u3000\uFF1A\u3000\u30AB\u30E1\u30E9\u79FB\u52D5\nRShift\u3000\uFF1A\u3000\u30C0\u30C3\u30B7\u30E5\u3000\u3000\u3000Space\u3000\uFF1A\u3000\u30B8\u30E3\u30F3\u30D7\nEnter,F\u3000\uFF1A\u3000\u6C7A\u5B9A\u30AD\u30FC\u3000\u3000\u3000ESC\u3000\uFF1A\u3000\u30E1\u30CB\u30E5\u30FC\u958B\u9589<speed=0.05>\n[p]\n[l]\n<speed=0>\u300C\u3000\u30B3\u30F3\u30C8\u30ED\u30FC\u30E9\u306E\u5834\u5408\u3000\u300D\n\u5DE6\u30B9\u30C6\u30A3\u30C3\u30AF\uFF1A\u79FB\u52D5\u3000\u3000\u3000\u3000\u53F3\u30B9\u30C6\u30A3\u30C3\u30AF\uFF1A\u30AB\u30E1\u30E9\u79FB\u52D5\n\uFF38\u30DC\u30BF\u30F3\uFF1A\u30C0\u30C3\u30B7\u30E5\u3000\u3000\u3000\u3000\u25A1\u30DC\u30BF\u30F3\uFF1A\u30B8\u30E3\u30F3\u30D7\n\u25CB\u30DC\u30BF\u30F3\uFF1A\u6C7A\u5B9A\u30AD\u30FC\u3000\u3000\u3000\u3000\u25B3\u30DC\u30BF\u30F3\uFF1A\u30E1\u30CB\u30E5\u30FC\u958B\u9589<speed=0.05>\n[p]\n[goto
@@ -47328,6 +47327,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1108589928}
+  - {fileID: 1780855461}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -110056,6 +110056,99 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1779271983}
   m_Mesh: {fileID: 4302456, guid: df72ea96ffc0b43b29549ea26f727359, type: 3}
+--- !u!1 &1780855460
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1780855461}
+  - component: {fileID: 1780855464}
+  - component: {fileID: 1780855463}
+  - component: {fileID: 1780855462}
+  m_Layer: 0
+  m_Name: MainLight - WebGL
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1780855461
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1780855460}
+  m_LocalRotation: {x: 0.86602545, y: -0, z: -0, w: 0.49999994}
+  m_LocalPosition: {x: 366.42194, y: -3.5849216, z: -300.09494}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 741501045}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 120, y: 0, z: 0}
+--- !u!114 &1780855462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1780855460}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c9cd3585d24a7d46bdc66d4a30ce20d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  angle: 0
+  isMove: 1
+--- !u!123 &1780855463
+LensFlare:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1780855460}
+  m_Enabled: 1
+  m_Flare: {fileID: 12100000, guid: 09ebe82dbd1113c3d000dc0b8d76c639, type: 2}
+  m_Color: {r: 0.9975659, g: 1, b: 0.8235294, a: 0}
+  m_Brightness: 0.5
+  m_FadeSpeed: 0
+  m_IgnoreLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Directional: 1
+--- !u!108 &1780855464
+Light:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1780855460}
+  m_Enabled: 1
+  serializedVersion: 7
+  m_Type: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 0.8
+  m_Range: 792.5523
+  m_SpotAngle: 126.9989
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 2
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 0.65
+    m_Bias: 0.1
+    m_NormalBias: 0
+    m_NearPlane: 0.2
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_Lightmapping: 4
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
 --- !u!1 &1783513866
 GameObject:
   m_ObjectHideFlags: 0
