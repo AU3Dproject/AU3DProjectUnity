@@ -7,8 +7,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: koBoilerTowerKaidan
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _EMISSION _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+  m_Shader: {fileID: 10800, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _ALPHATEST_ON _EMISSION _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -89,14 +89,20 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - first:
+        name: PixelSnap
+      second: 0
+    - first:
         name: _Brightness
       second: 1
     - first:
         name: _BumpScale
       second: 1
     - first:
+        name: _ColorMask
+      second: 15
+    - first:
         name: _Cutoff
-      second: 0.5
+      second: 0
     - first:
         name: _DetailNormalMapScale
       second: 1
@@ -123,7 +129,7 @@ Material:
       second: 0
     - first:
         name: _Mode
-      second: 0
+      second: 1
     - first:
         name: _OcclusionStrength
       second: 1
@@ -146,10 +152,28 @@ Material:
         name: _SrcBlend
       second: 1
     - first:
+        name: _Stencil
+      second: 0
+    - first:
+        name: _StencilComp
+      second: 8
+    - first:
+        name: _StencilOp
+      second: 0
+    - first:
+        name: _StencilReadMask
+      second: 255
+    - first:
+        name: _StencilWriteMask
+      second: 255
+    - first:
         name: _TintColor
       second: 0
     - first:
         name: _UVSec
+      second: 0
+    - first:
+        name: _UseUIAlphaClip
       second: 0
     - first:
         name: _VertexColor
@@ -164,6 +188,9 @@ Material:
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
+    - first:
+        name: _NotVisibleColor
+      second: {r: 0, g: 1, b: 0, a: 1}
     - first:
         name: _OutlineColor
       second: {r: 0, g: 0, b: 0, a: 1}
