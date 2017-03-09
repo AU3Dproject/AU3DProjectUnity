@@ -106,8 +106,10 @@ public class MapManager : ManagerMonoBehaviour<MapManager>, IEnhancedScrollerDel
 				if (_data[i].Selected = (selectedDataIndex == i)) {
 					NavigationManager.Instance.setToTarget(transform.GetChild(i).gameObject);
 					transform.GetChild(i).GetChild(1).GetComponent<MeshRenderer>().enabled = true;
+					transform.GetChild(i).GetChild(2).GetComponent<MeshRenderer>().enabled = true;
 				} else {
 					transform.GetChild(i).GetChild(1).GetComponent<MeshRenderer>().enabled = false;
+					transform.GetChild(i).GetChild(2).GetComponent<MeshRenderer>().enabled = false;
 				}
 			}
 

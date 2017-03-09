@@ -18,48 +18,58 @@ public class NavigationAgent : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-		//line = GetComponent<LineRenderer>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
+		//移動先までの道のりが確定できていたら常に開始点をプレイヤーに移動させる。
 		if (agent.pathStatus == UnityEngine.AI.NavMeshPathStatus.PathComplete) {
 			agent.Warp(PlayerManager.Instance.player_model.transform.position);
 		}
 
+		//各種条件が整ったときにルートを求め表示する。
 		if (fromTarget != null && toTarget != null && agent != null && agent.pathStatus != UnityEngine.AI.NavMeshPathStatus.PathInvalid) {
 
-			//line.enabled = true;
-
+			//行き先設定
 			agent.SetDestination(toTarget.transform.position);
 
+			//ルートを計算
 			path = new UnityEngine.AI.NavMeshPath();
 			agent.CalculatePath(toTarget.transform.position, path);
 
-			//line.numPositions = path.corners.Length;
-			//line.SetVertexCount(path.corners.Length);
-
+			//配列としてルートの各点を取得
 			Vector3[] destination = path.corners;
 
+			//ルートに高さを加算。
 			for (int i = 0; i < destination.Length; i++) {
-				destination[i] = new Vector3(destination[i].x, destination[i].y + tall, destination[i].z);
+				destination[i] += tall * Vector3.up;
 			}
 
+			//ルート表示を一旦削除
 			removeLine();
-			drawNode(destination[0]);
+
+			//ルートを表示する
+			//drawNode(destination[0]);
 			for (int i = 0; i < destination.Length-1; i++) {
 				drawLine(destination[i], destination[i + 1]);
+				drawNode(destination[i]);
 			}
 			
 
 		}
 
+		//行き先がなければルート表示を削除
 		if (toTarget == null) {
 			removeLine();
 		}
 	}
 
+	/// <summary>
+	/// LineRendererを生成し、fromからtoまで線を描画する。
+	/// </summary>
+	/// <param name="from">描画線の開始位置</param>
+	/// <param name="to">描画線の終端位置</param>
 	private void drawLine(Vector3 from, Vector3 to) {
 		GameObject line_renderer_object = new GameObject("lineRenderer", typeof(LineRenderer));
 		LineRenderer line_renderer = line_renderer_object.GetComponent<LineRenderer>();
@@ -68,15 +78,22 @@ public class NavigationAgent : MonoBehaviour {
 		line_renderer_object.transform.parent = transform;
 	}
 
-	private void drawNode(Vector3 start) {
+	/// <summary>
+	/// ノードの描画
+	/// </summary>
+	/// <param name="position">描画するノードの位置</param>
+	private void drawNode(Vector3 position) {
 		GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		go.GetComponent<SphereCollider>().enabled = false;
 		go.GetComponent<MeshRenderer>().material = node_material;
 		go.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-		go.transform.position = start;
+		go.transform.position = position;
 		go.transform.parent = transform;
 	}
 
+	/// <summary>
+	/// 描画した線やノードの削除（子オブジェクトの全消去）
+	/// </summary>
 	private void removeLine() {
 		if (transform.childCount > 0) {
 			foreach (Transform child in transform) {
