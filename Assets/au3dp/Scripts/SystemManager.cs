@@ -8,6 +8,6 @@ public class SystemManager : ManagerMonoBehaviour<SystemManager> {
 	public TimeManager timeManager;
 	public TalkEventValiableManager valiableManager;
 	public NavigationManager navigationManager;
-	public MapManager mapManager;
+	//public MapManager mapManager;
 	
 }

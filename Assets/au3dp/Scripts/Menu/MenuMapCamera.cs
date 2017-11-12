@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// メニューのマップに使うカメラのスクリプト
 /// </summary>
 public class MenuMapCamera : MonoBehaviour {
-	
+
 	//マップマネージャ
 	Transform mapManager;
 	//カメラによって選択している、マップにある場所オブジェクトに付随するコライダー
@@ -15,7 +15,7 @@ public class MenuMapCamera : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-		mapManager = MapManager.Instance.transform;
+		// mapManager = MapManager.Instance.transform;
 	}
 
 	// Update is called once per frame

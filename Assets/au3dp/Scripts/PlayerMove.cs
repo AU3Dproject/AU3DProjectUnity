@@ -2,7 +2,7 @@
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMove : MonoBehaviour {
-	
+
 	[SerializeField]
 	[Tooltip("歩行速度")]
 	public float walk_speed = 4.0f;
@@ -29,7 +29,7 @@ public class PlayerMove : MonoBehaviour {
 	private Animator animator = null;
     //ジャンプのフラグ
     private bool is_jump = false;
-	
+
 
 	/* Start
 	 * 　（１）変数・コンポーネント初期化
@@ -39,7 +39,7 @@ public class PlayerMove : MonoBehaviour {
 		animator = GetComponent<Animator>();
 		move_vector = new Vector3(0.0f,0.0f,0.0f);
 	}
-	
+
 
 	/* Update
 	 * 　（１）移動処理総合
@@ -80,10 +80,12 @@ public class PlayerMove : MonoBehaviour {
 	 */
 	 //todo: コード汚い
 	private void moveJump(){
-		
+
 		if (character_controller.isGrounded) {
-			if(animator.GetBool ("isJump")==true && move_vector.y == 0.0f){
-				settingAnimator(null,null,null,false);
+			if(animator != null){
+				if(animator.GetBool ("isJump")==true && move_vector.y == 0.0f){
+					settingAnimator(null,null,null,false);
+				}
 			}
 			if(Input.GetButton("Jump") && !is_jump){
 				is_jump = true;
@@ -104,7 +106,7 @@ public class PlayerMove : MonoBehaviour {
 	 */
 	private void moveInit(){
 		if (Input.GetButtonDown("Init") || transform.position.y <= -10.0f) {
-			settingAnimator(true,false,false,false);
+			if (animator != null) settingAnimator(true,false,false,false);
 			transform.position = initialize_position;
 		}
 	}
@@ -146,12 +148,14 @@ public class PlayerMove : MonoBehaviour {
 		//X方向かZ方向に動いている時
 		if (mv_z != 0.0f || mv_x != 0.0f) {
 			//歩行・走行アニメーション切替
-			if (Input.GetButton ("Dash") ^ always_dash_flag && animator.GetBool("isJump") == false) {
-				//Run状態へ
-				settingAnimator(false,false,true,null);
-			}else{
-				//Walk状態へ
-				settingAnimator(false,true,false,null);
+			if(animator != null){
+				if (Input.GetButton ("Dash") ^ always_dash_flag && animator.GetBool("isJump") == false) {
+					//Run状態へ
+					settingAnimator(false,false,true,null);
+				}else{
+					//Walk状態へ
+					settingAnimator(false,true,false,null);
+				}
 			}
 
 			//進行方向にPlayerを向かせる処理
@@ -159,7 +163,7 @@ public class PlayerMove : MonoBehaviour {
 			angle_vector.y = 0;
 			Quaternion characterTargetRotation = Quaternion.LookRotation (angle_vector);
 			transform.rotation = Quaternion.RotateTowards (transform.rotation, characterTargetRotation, 360 * 2 * Time.deltaTime);
-		
+
 		//動いていない時
 		} else {
 			//Stay状態へ
