@@ -12,7 +12,7 @@ public class MainMenuButtonScript : Button {
     void Update() {
 
         if (buttonImage == null) {
-            buttonImage = transform.FindChild("Image").gameObject.GetComponent<Image>();
+            buttonImage = transform.Find("Image").gameObject.GetComponent<Image>();
         }
         
     }
