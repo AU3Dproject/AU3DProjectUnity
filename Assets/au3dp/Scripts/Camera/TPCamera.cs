@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class CameraMove : MonoBehaviour {
-	
+
 	[SerializeField]
 	//PlayerとCameraの距離
 	public float distance = 1.2f ;
@@ -35,7 +35,7 @@ public class CameraMove : MonoBehaviour {
 	private Camera cameraComponent = null;
 	//Cameraの壁めり込み判定のためのRaycast
 	private RaycastHit hit;
-	
+
 	/* Start
 	 * 　（１）Component・Objectの取得
 	 */
@@ -45,7 +45,7 @@ public class CameraMove : MonoBehaviour {
 		playerModel = Player.GetComponentInChildren<SkinnedMeshRenderer>();
 	}
 
-	
+
 	/* FixedUpdate
 	 * 　（１）三人称視点モードにより分岐
 	 * 　（２）カメラ動作処理
@@ -83,7 +83,7 @@ public class CameraMove : MonoBehaviour {
 		if (VerticalAngle >= (isTP ? VerticalAngleLimitTP.y : VerticalAngleLimitFP.y) * Mathf.Deg2Rad)
 			VerticalAngle =  (isTP ? VerticalAngleLimitTP.y : VerticalAngleLimitFP.y) * Mathf.Deg2Rad;
 		//拡大率の制限
-		if (zoom <= -distance / 2)zoom = -distance / 2;
+		if (zoom <= -distance / 2)zoom = -distance / 10;
 		if (zoom >= +distance * 2)zoom = +distance * 2;
 
 		//新しい各座標値の計算
@@ -147,5 +147,5 @@ public class CameraMove : MonoBehaviour {
 		}
 	}
 
-	
+
 }
