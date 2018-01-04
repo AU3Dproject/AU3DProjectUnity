@@ -72,7 +72,7 @@ public class TalkEventScript : MonoBehaviour {
 			near_object.enabled = false;
 		}
 		player = PlayerManager.Instance.player_model;
-		text_window = GameObject.Find("/Canvases").transform.Find("TalkEventCanvas").gameObject;
+		text_window = GameObject.Find("/Canvases").transform.Find("TalkCanvas").gameObject;
 		writer = text_window.transform.GetChild(0).GetComponent<Writer>();
 		select_button_manager = text_window.transform.GetChild(1).GetComponent<TalkEventSelectButton>();
 		bgm_manager = BGMManager.Instance;
@@ -248,7 +248,7 @@ public class TalkEventScript : MonoBehaviour {
 		else
 			return false;
 	}
-	
+
 	/* 向かい合わせ
 	 * 　（１）Playerの向きをNPCに向ける
 	 * 　（２）NPCも同様
