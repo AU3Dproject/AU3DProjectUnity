@@ -30,7 +30,7 @@ public class TalkEventScript : MonoBehaviour {
 	private bool is_event_end = true;
 
 	//テキストウィンドウを操作するためのGameObject
-	private GameObject text_window = null;
+	private GameObject talk_canvas = null;
 	//入力待ち判定
 	private bool is_wait = false;
 	//選択待ち判定
@@ -72,11 +72,14 @@ public class TalkEventScript : MonoBehaviour {
 			near_object.enabled = false;
 		}
 		player = PlayerManager.Instance.player_model;
-		text_window = GameObject.Find("/Canvases").transform.Find("TalkCanvas").gameObject;
-		writer = text_window.transform.GetChild(0).GetComponent<Writer>();
-		select_button_manager = text_window.transform.GetChild(1).GetComponent<TalkEventSelectButton>();
+		//要修正
+		//talk_canvas = GameObject.Find("/Canvases").transform.Find("TalkCanvas").gameObject;
+		talk_canvas = TalkManager.Instance.getTalkCanvas();
+		writer = TalkManager.Instance.getWriter();
+		select_button_manager = TalkManager.Instance.getSelectButton();
+
 		bgm_manager = BGMManager.Instance;
-		text_window.SetActive(false);
+		talk_canvas.SetActive(false);
 		loadEventScript();
 
 		functions = new Function[]{
@@ -159,8 +162,8 @@ public class TalkEventScript : MonoBehaviour {
 			while (!is_wait && !is_select && line_num < script_lines.Count) {
 			string line = script_lines[line_num];
 			if (!functionExecute(line) && line != "") {
-				if (!text_window.activeInHierarchy) {
-					text_window.SetActive(true);
+				if (!talk_canvas.activeInHierarchy) {
+					talk_canvas.SetActive(true);
 				}
 				writer.text += (line + "\n");
 				writer.isTextActive = true;
@@ -181,7 +184,7 @@ public class TalkEventScript : MonoBehaviour {
 		if (!is_wait && script_lines.Count <= line_num && !writer.isTextActive && !is_select) {
 			writer.removeText();
 			writer.text = "";
-			text_window.SetActive(false);
+			talk_canvas.SetActive(false);
 			line_num = 0;
 			is_execute = false;
 			is_wait = false;
@@ -225,7 +228,7 @@ public class TalkEventScript : MonoBehaviour {
 	}
 
 	public void activeWindow(bool visible) {
-		text_window.SetActive(visible);
+		talk_canvas.SetActive(visible);
 	}
 
 	public void goLabel(string label) {
