@@ -8,6 +8,7 @@ public class TalkEventSelectButton : MonoBehaviour {
 
 	public string answerLabel = "";
 	public bool isAnswer;
+	public float baseHeight = -300.0f;
 
 	private GameObject buttonPrefab = null;
 	private List<GameObject> buttons = new List<GameObject>();
@@ -27,7 +28,7 @@ public class TalkEventSelectButton : MonoBehaviour {
 
 
 	public void openButtons() {
-		float baseY = -900.0f / (noButton+1);
+		float baseY = baseHeight / (noButton+1);
 		for (int i = 0; i < noButton; i++) {
 			GameObject instant = Instantiate(buttonPrefab, transform) as GameObject;
 			instant.name = labels[i];
