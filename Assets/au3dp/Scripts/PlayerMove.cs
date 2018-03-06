@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
+
 public class PlayerMove : MonoBehaviour {
 
 	[SerializeField]
@@ -29,6 +30,9 @@ public class PlayerMove : MonoBehaviour {
 	private Animator animator = null;
     //ジャンプのフラグ
     private bool is_jump = false;
+
+	public GameObject controller_right;
+	public GameObject controller_left;
 
 
 	/* Start
@@ -65,7 +69,7 @@ public class PlayerMove : MonoBehaviour {
 		if (!PlayerManager.Instance.is_pause) {
 			moveInit ();
 			moveJump ();
-			moveWalking ();
+			moveWalkingVR ();
 			character_controller.Move (move_vector * Time.deltaTime);
 		} else {
 			settingAnimator(true,false,false,false);
@@ -81,13 +85,16 @@ public class PlayerMove : MonoBehaviour {
 	 //todo: コード汚い
 	private void moveJump(){
 
+		var trackedObject = controller_right.GetComponent<SteamVR_TrackedObject> ();
+		var device = SteamVR_Controller.Input ((int)trackedObject.index);
+
 		if (character_controller.isGrounded) {
 			if(animator != null){
 				if(animator.GetBool ("isJump")==true && move_vector.y == 0.0f){
 					settingAnimator(null,null,null,false);
 				}
 			}
-			if(Input.GetButton("Jump") && !is_jump){
+			if((device.GetPress(SteamVR_Controller.ButtonMask.Trigger) || Input.GetButton("Jump")) && !is_jump){
 				is_jump = true;
 				move_vector.y+=(jump_power);
 				settingAnimator(null,null,null,true);
@@ -169,6 +176,31 @@ public class PlayerMove : MonoBehaviour {
 			//Stay状態へ
 			settingAnimator(true,false,false,null);
 		}
+	}
+
+	/* 移動処理
+	 * 　（１）x,z方向の移動ベクトルの計算と処理
+	 * 　（２）Animatorの切替を行う
+	 * 　（３）移動中にキャラクターの方向を移動方向に同期させる
+	 */
+	private void moveWalkingVR(){
+
+		var trackedObject = controller_right.GetComponent<SteamVR_TrackedObject> ();
+		var device = SteamVR_Controller.Input ((int)trackedObject.index);
+
+		//歩行・走行スピード一時変数
+		float spd = (device.GetPress(SteamVR_Controller.ButtonMask.Touchpad) ^ always_dash_flag) ? dash_speed : walk_speed;
+		//カメラの直進方向の一時変数
+		float angle = PlayerManager.Instance.player_camera.transform.localEulerAngles.y;
+		//x方向とz方向の移動の0~1の数値
+		float mv_z = -(device.GetAxis().y * Mathf.Cos (Mathf.Deg2Rad * angle) + device.GetAxis().x * Mathf.Sin (Mathf.Deg2Rad * (angle + 180.0f)));
+		float mv_x = -(device.GetAxis().y * Mathf.Sin (Mathf.Deg2Rad * angle) - device.GetAxis().x * Mathf.Cos (Mathf.Deg2Rad * (angle + 180.0f)));
+		//x方向とz方向の移動のスピードと調整スピードの反映
+		mv_z = mv_z * (spd + adjust_speed);
+		mv_x = mv_x * (spd + adjust_speed);
+		//移動ベクトルの決定
+		move_vector = new Vector3 (mv_x,move_vector.y,mv_z);
+
 	}
 
 

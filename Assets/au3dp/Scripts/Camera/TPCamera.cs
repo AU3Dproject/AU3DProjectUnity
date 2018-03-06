@@ -4,6 +4,7 @@ using System.Collections;
 public class CameraMove : MonoBehaviour {
 
 	[SerializeField]
+
 	//PlayerとCameraの距離
 	public float distance = 1.2f ;
 	//Cameraの水平方向の角度
@@ -101,7 +102,7 @@ public class CameraMove : MonoBehaviour {
 		transform.position = newPos;
 
 		//CameraをPlayer方向へ向ける
-		transform.LookAt (Player.transform.position + new Vector3(0.0f,tall,0.0f));
+		//transform.LookAt (Player.transform.position + new Vector3(0.0f,tall,0.0f));
 		//Cameraをx軸方向を調整
 		if (!isTP) {
 			float new_rotation_x = transform.localRotation.eulerAngles.x + VerticalAngle * Mathf.Rad2Deg;
