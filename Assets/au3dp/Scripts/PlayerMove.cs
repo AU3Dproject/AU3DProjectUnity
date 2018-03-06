@@ -117,12 +117,11 @@ public class PlayerMove : MonoBehaviour {
 	 * 　（２）設置しているときは重力をかけない。
 	 */
 	private void moveGravity(){
-		// if (character_controller.isGrounded) {
-		// 	move_vector.y = 0.0f;
-		// } else {
-		// 	move_vector.y -= gravity * Time.deltaTime;
-		// }
-		move_vector.y -= gravity * Time.deltaTime;
+		 if (character_controller.isGrounded) {
+		 	move_vector.y = 0.0f;
+		 } else {
+		 	move_vector.y -= gravity * Time.deltaTime;
+		 }
 	}
 
 
