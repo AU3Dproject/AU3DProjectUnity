@@ -25,7 +25,7 @@ public class MainMenuContent : MonoBehaviour {
 				MainMenuManager.Instance.description_component.setDescription(selected_description);
 			}
 			if (firstSelect.GetComponentInChildren<EnhancedScroller>() != null) {
-				firstSelect.GetComponentInChildren<EnhancedScroller>().FocusCell();
+//				firstSelect.GetComponentInChildren<EnhancedScroller>().FocusCell();
 			} else {
 				event_system.SetSelectedGameObject(null);
 				event_system.SetSelectedGameObject(firstSelect);

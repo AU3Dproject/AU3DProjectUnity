@@ -148,7 +148,7 @@ public class MapManager : ManagerMonoBehaviour<MapManager>, IEnhancedScrollerDel
 
 	public void jump(int dataIndex) {
 		Debug.Log(dataIndex);
-		myScroller.JumpToDataIndex(dataIndex, jump_scroller_offset, jump_cell_offset, useSpacing, EnhancedScroller.TweenType.linear, 0.1f,null, myScroller.ScrollSize);
+		//myScroller.JumpToDataIndex(dataIndex, jump_scroller_offset, jump_cell_offset, useSpacing, EnhancedScroller.TweenType.linear, 0.1f,null, myScroller.ScrollSize);
 	}
 
 }
